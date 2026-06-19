@@ -1,1027 +1,904 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sorteador de Filmes</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-dark: #0a0a0a;
-            --bg-secondary: #141414;
-            --border-color: #2a2a2a;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --accent-primary: #8b5cf6;
-            --accent-hover: #a78bfa;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
-            background: linear-gradient(135deg, var(--bg-dark) 0%, #0f0f0f 100%);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
-
-        /* ============================================
-           HEADER / HERO SECTION
-           ============================================ */
-        .header {
-            position: relative;
-            padding: 2rem 1.5rem;
-            text-align: center;
-            border-bottom: 1px solid var(--border-color);
-            background: linear-gradient(180deg, rgba(139, 92, 246, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
-        }
-
-        .header h1 {
-            font-size: clamp(2rem, 5vw, 3rem);
-            font-weight: 700;
-            letter-spacing: -1.5px;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .header p {
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* ============================================
-           CONTAINER & GRID
-           ============================================ */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            padding: 3rem 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-                padding: 2rem 1.5rem;
-            }
-        }
-
-        /* ============================================
-           LEFT SECTION: INPUT & LISTA
-           ============================================ */
-        .section {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        /* ============================================
-           INPUT AREA
-           ============================================ */
-        .input-area {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: var(--transition);
-        }
-
-        .input-area:focus-within {
-            border-color: var(--accent-primary);
-            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.15);
-        }
-
-        .input-area h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-secondary);
-        }
-
-        .input-group {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        #filmeInput {
-            flex: 1;
-            background: var(--bg-dark);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.875rem 1rem;
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: var(--transition);
-            outline: none;
-        }
-
-        #filmeInput:focus {
-            border-color: var(--accent-primary);
-            background: rgba(139, 92, 246, 0.05);
-        }
-
-        #filmeInput::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.875rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            outline: none;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
-            color: white;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(139, 92, 246, 0.3);
-        }
-
-        .btn-primary:active:not(:disabled) {
-            transform: translateY(0);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-icon {
-            width: 40px;
-            height: 40px;
-            padding: 0;
-            border-radius: 8px;
-        }
-
-        /* ============================================
-           FILMES LIST
-           ============================================ */
-        .filmes-list {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .filmes-list h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-secondary);
-        }
-
-        .filme-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            background: var(--bg-dark);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            transition: var(--transition);
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .filme-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .filme-item:hover {
-            border-color: var(--accent-primary);
-            background: rgba(139, 92, 246, 0.03);
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);
-        }
-
-        .filme-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-            flex: 1;
-        }
-
-        .filme-nome {
-            font-weight: 600;
-            font-size: 1rem;
-            color: var(--text-primary);
-        }
-
-        .filme-status {
-            font-size: 0.85rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            width: fit-content;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .filme-status.nao-assistido {
-            background: rgba(245, 158, 11, 0.2);
-            color: var(--warning);
-        }
-
-        .filme-status.assistido {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--success);
-        }
-
-        .filme-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-status {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.85rem;
-            border-radius: 6px;
-            background: rgba(139, 92, 246, 0.2);
-            color: var(--accent-primary);
-            border: 1px solid var(--accent-primary);
-        }
-
-        .btn-status:hover {
-            background: var(--accent-primary);
-            color: white;
-        }
-
-        .btn-delete {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.85rem;
-            border-radius: 6px;
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--danger);
-            border: 1px solid var(--danger);
-        }
-
-        .btn-delete:hover {
-            background: var(--danger);
-            color: white;
-        }
-
-        .list-empty {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-secondary);
-        }
-
-        .list-empty p {
-            font-size: 0.95rem;
-        }
-
-        /* ============================================
-           SORTEADOR SECTION (RIGHT)
-           ============================================ */
-        .sorteador-section {
-            position: relative;
-            min-height: 500px;
-        }
-
-        .sorteador-card {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 3rem 2rem;
-            box-shadow: 0 20px 48px rgba(139, 92, 246, 0.15);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 2rem;
-            height: 100%;
-            min-height: 500px;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .sorteador-card:hover {
-            border-color: var(--accent-primary);
-            box-shadow: 0 24px 56px rgba(139, 92, 246, 0.2);
-        }
-
-        .sorteador-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        .sorteador-card h2 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .sorteador-card p {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            max-width: 300px;
-            line-height: 1.6;
-        }
-
-        .btn-sortear {
-            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
-            color: white;
-            padding: 1rem 2.5rem;
-            font-size: 1.1rem;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            transition: var(--transition);
-            box-shadow: 0 12px 32px rgba(139, 92, 246, 0.3);
-            min-width: 250px;
-            text-transform: uppercase;
-        }
-
-        .btn-sortear:hover:not(:disabled) {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 40px rgba(139, 92, 246, 0.4);
-        }
-
-        .btn-sortear:active:not(:disabled) {
-            transform: translateY(-2px);
-        }
-
-        .btn-sortear:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* ============================================
-           RESULTADO DO SORTEIO (MODAL/OVERLAY)
-           ============================================ */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(4px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, #1a1a1a 100%);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 3rem 2rem;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-            animation: slideInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-        }
-
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-header-icon {
-            font-size: 2.5rem;
-            animation: spin 0.8s ease-out;
-        }
-
-        @keyframes spin {
-            from {
-                transform: rotate(-180deg) scale(0.5);
-            }
-            to {
-                transform: rotate(0) scale(1);
-            }
-        }
-
-        .modal-header h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .modal-body {
-            margin: 2rem 0;
-        }
-
-        .filme-sorteado {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0.1) 100%);
-            border: 2px solid var(--accent-primary);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .filme-sorteado-nome {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--accent-primary);
-            word-break: break-word;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 2rem;
-        }
-
-        .btn-modal {
-            flex: 1;
-            padding: 0.875rem 1rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-fechar {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-        }
-
-        .btn-fechar:hover {
-            background: var(--bg-dark);
-            border-color: var(--accent-primary);
-            color: var(--text-primary);
-        }
-
-        /* ============================================
-           MENSAGENS (LOADING, ERROR, SUCCESS)
-           ============================================ */
-        .message {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            display: none;
-            animation: slideInDown 0.3s ease-out;
-        }
-
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message.show {
-            display: block;
-        }
-
-        .message-success {
-            background: rgba(16, 185, 129, 0.2);
-            border: 1px solid var(--success);
-            color: var(--success);
-        }
-
-        .message-error {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid var(--danger);
-            color: var(--danger);
-        }
-
-        .message-warning {
-            background: rgba(245, 158, 11, 0.2);
-            border: 1px solid var(--warning);
-            color: var(--warning);
-        }
-
-        .message-info {
-            background: rgba(59, 130, 246, 0.2);
-            border: 1px solid #3b82f6;
-            color: #3b82f6;
-        }
-
-        /* ============================================
-           SPINNER / LOADING
-           ============================================ */
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(139, 92, 246, 0.3);
-            border-top-color: var(--accent-primary);
-            border-radius: 50%;
-            animation: spin-loader 0.8s linear infinite;
-        }
-
-        @keyframes spin-loader {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* ============================================
-           RESPONSIVIDADE
-           ============================================ */
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-
-            .sorteador-card {
-                min-height: 400px;
-            }
-
-            .modal-content {
-                margin: 1rem;
-                padding: 2rem 1.5rem;
-                max-width: 90vw;
-            }
-
-            .btn-sortear {
-                width: 100%;
-                min-width: unset;
-            }
-
-            .filme-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .filme-actions {
-                width: 100%;
-            }
-
-            .btn-status,
-            .btn-delete {
-                flex: 1;
-            }
-        }
-
-        /* ============================================
-           ACESSIBILIDADE
-           ============================================ */
-        button:focus {
-            outline: 2px solid var(--accent-primary);
-            outline-offset: 2px;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorteador de Filmes</title>
+<meta name="description" content="Gerencie sua lista de filmes e sorteie qual assistir hoje.">
+<style>
+  /* ===========================================================
+     DESIGN TOKENS
+     =========================================================== */
+  :root{
+    --bg: #0a0a0a;
+    --bg-elevated: #131316;
+    --bg-card: #18181c;
+    --border: #262629;
+    --purple: #8b5cf6;
+    --purple-bright: #a78bfa;
+    --purple-dim: rgba(139, 92, 246, 0.15);
+    --text: #ffffff;
+    --text-secondary: #9a9aa2;
+    --text-faint: #5e5e66;
+    --green: #34d399;
+    --red: #f87171;
+    --radius: 14px;
+    --radius-sm: 10px;
+    --glow: 0 0 0 1px rgba(139,92,246,.15), 0 8px 24px -8px rgba(139,92,246,.45);
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ color-scheme: dark; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(139,92,246,0.10), transparent 45%),
+      radial-gradient(circle at 100% 30%, rgba(139,92,246,0.06), transparent 40%),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  .wrap{
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 20px 96px;
+  }
+
+  /* ===========================================================
+     HEADER / HERO
+     =========================================================== */
+  header.hero{
+    text-align:center;
+    margin-bottom: 36px;
+    animation: fadeUp .6s ease both;
+  }
+
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--purple-bright);
+    background: var(--purple-dim);
+    border: 1px solid rgba(139,92,246,.25);
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+
+  h1{
+    font-size: clamp(28px, 5vw, 40px);
+    margin: 0 0 8px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  h1 span{
+    background: linear-gradient(135deg, var(--purple-bright), var(--purple));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .subtitle{
+    color: var(--text-secondary);
+    font-size: 15px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  /* ===========================================================
+     SORTEAR BUTTON (signature element)
+     =========================================================== */
+  .draw-zone{
+    display:flex;
+    justify-content:center;
+    margin: 32px 0 36px;
+  }
+
+  #drawBtn{
+    position:relative;
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    color:#fff;
+    font-family: inherit;
+    font-size:16px;
+    font-weight:600;
+    letter-spacing: .01em;
+    padding: 16px 36px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--purple-bright), var(--purple) 60%, #6d28d9);
+    box-shadow: var(--glow);
+    transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  #drawBtn:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(139,92,246,.3), 0 14px 32px -8px rgba(139,92,246,.65);
+  }
+
+  #drawBtn:active{ transform: translateY(0) scale(.98); }
+
+  #drawBtn:disabled{
+    filter: grayscale(.6) brightness(.6);
+    cursor: not-allowed;
+    transform:none;
+    box-shadow:none;
+  }
+
+  #drawBtn .reel{
+    font-size: 18px;
+    transition: transform .5s cubic-bezier(.3,1.4,.5,1);
+  }
+
+  #drawBtn.spinning .reel{
+    animation: spin .6s linear infinite;
+  }
+
+  @keyframes spin{
+    to{ transform: rotate(360deg); }
+  }
+
+  .draw-hint{
+    text-align:center;
+    color: var(--text-faint);
+    font-size: 13px;
+    margin-top: -22px;
+    margin-bottom: 32px;
+  }
+
+  /* ===========================================================
+     ADD FORM
+     =========================================================== */
+  .add-form{
+    display:flex;
+    gap:10px;
+    margin-bottom: 22px;
+    animation: fadeUp .6s ease .05s both;
+  }
+
+  .add-form input[type="text"]{
+    flex:1;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 15px;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    outline:none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+
+  .add-form input[type="text"]::placeholder{ color: var(--text-faint); }
+
+  .add-form input[type="text"]:focus{
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px var(--purple-dim);
+  }
+
+  .add-form button{
+    flex-shrink:0;
+    width: 50px;
+    border:none;
+    border-radius: var(--radius-sm);
+    background: var(--purple);
+    color:#fff;
+    font-size: 22px;
+    font-weight: 300;
+    line-height:1;
+    cursor:pointer;
+    transition: background .15s ease, transform .15s ease;
+  }
+
+  .add-form button:hover{ background: var(--purple-bright); transform: translateY(-1px); }
+  .add-form button:active{ transform: translateY(0); }
+
+  .form-error{
+    color: var(--red);
+    font-size: 13px;
+    margin: -12px 0 18px;
+    min-height: 18px;
+    animation: fadeUp .25s ease both;
+  }
+
+  /* ===========================================================
+     FILTERS
+     =========================================================== */
+  .filters{
+    display:flex;
+    gap:8px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    animation: fadeUp .6s ease .1s both;
+  }
+
+  .filter-btn{
+    appearance:none;
+    border:1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px 16px;
+    border-radius: 999px;
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+
+  .filter-btn:hover{ color: var(--text); border-color: #3a3a40; }
+
+  .filter-btn.active{
+    background: var(--purple-dim);
+    border-color: rgba(139,92,246,.5);
+    color: var(--purple-bright);
+  }
+
+  .filter-btn .count{
+    opacity:.7;
+    font-size: 11px;
+    margin-left: 4px;
+  }
+
+  /* ===========================================================
+     MOVIE LIST
+     =========================================================== */
+  .list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    animation: fadeUp .6s ease .15s both;
+  }
+
+  .movie-card{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 14px 14px 16px;
+    transition: border-color .15s ease, transform .15s ease, background .15s ease;
+    animation: cardIn .35s ease both;
+  }
+
+  .movie-card:hover{ border-color: #323238; }
+
+  .movie-card.watched{ opacity: .55; }
+
+  .status-toggle{
+    flex-shrink:0;
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color: transparent;
+    transition: all .15s ease;
+  }
+
+  .status-toggle:hover{ border-color: var(--purple); }
+
+  .movie-card.watched .status-toggle{
+    background: var(--green);
+    border-color: var(--green);
+    color: #06281c;
+  }
+
+  .movie-title{
+    flex:1;
+    font-size: 15px;
+    font-weight: 500;
+    word-break: break-word;
+  }
+
+  .movie-card.watched .movie-title{
+    text-decoration: line-through;
+    text-decoration-color: var(--text-faint);
+  }
+
+  .movie-badge{
+    flex-shrink:0;
+    font-size: 11px;
+    font-weight:600;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: var(--purple-dim);
+    color: var(--purple-bright);
+  }
+
+  .movie-card.watched .movie-badge{
+    background: rgba(52,211,153,.12);
+    color: var(--green);
+  }
+
+  .delete-btn{
+    flex-shrink:0;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border:none;
+    background: transparent;
+    color: var(--text-faint);
+    cursor:pointer;
+    font-size: 16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: all .15s ease;
+  }
+
+  .delete-btn:hover{
+    background: rgba(248,113,113,.12);
+    color: var(--red);
+  }
+
+  /* Empty state */
+  .empty-state{
+    text-align:center;
+    padding: 48px 20px;
+    color: var(--text-faint);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+  }
+
+  .empty-state .big{
+    font-size: 32px;
+    display:block;
+    margin-bottom: 10px;
+  }
+
+  /* ===========================================================
+     MODAL (result)
+     =========================================================== */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    background: rgba(0,0,0,.7);
+    backdrop-filter: blur(6px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 20px;
+    z-index: 100;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .2s ease;
+  }
+
+  .modal-overlay.open{ opacity:1; pointer-events:auto; }
+
+  .modal{
+    width: 100%;
+    max-width: 380px;
+    background: var(--bg-elevated);
+    border: 1px solid rgba(139,92,246,.3);
+    border-radius: 20px;
+    padding: 36px 28px 28px;
+    text-align:center;
+    box-shadow: 0 0 0 1px rgba(139,92,246,.1), 0 30px 60px -20px rgba(0,0,0,.7), 0 0 60px -15px rgba(139,92,246,.35);
+    transform: scale(.92) translateY(10px);
+    transition: transform .25s cubic-bezier(.2,1.4,.4,1);
+  }
+
+  .modal-overlay.open .modal{ transform: scale(1) translateY(0); }
+
+  .modal .clapper{ font-size: 44px; margin-bottom: 6px; display:block; }
+
+  .modal .eyebrow{ margin-bottom: 14px; }
+
+  .modal h2{
+    font-size: 24px;
+    margin: 0 0 8px;
+    word-break: break-word;
+    letter-spacing: -0.01em;
+  }
+
+  .modal p.helper{
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    margin: 0 0 26px;
+  }
+
+  .modal-actions{
+    display:flex;
+    gap:10px;
+  }
+
+  .modal-actions button{
+    flex:1;
+    border:none;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight:600;
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+
+  #modalMarkWatched{
+    background: var(--purple);
+    color:#fff;
+  }
+  #modalMarkWatched:hover{ background: var(--purple-bright); }
+
+  #modalClose{
+    background: var(--bg-card);
+    border: 1px solid var(--border) !important;
+    color: var(--text-secondary);
+  }
+  #modalClose:hover{ color: var(--text); border-color: #3a3a40 !important; }
+
+  /* ===========================================================
+     TOAST (feedback when nothing to draw)
+     =========================================================== */
+  .toast{
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 14px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px -10px rgba(0,0,0,.6);
+    opacity:0;
+    pointer-events:none;
+    transition: all .25s ease;
+    z-index: 200;
+    max-width: 90vw;
+  }
+
+  .toast.show{
+    opacity:1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ===========================================================
+     FOOTER
+     =========================================================== */
+  footer{
+    text-align:center;
+    margin-top: 56px;
+    color: var(--text-faint);
+    font-size: 12.5px;
+  }
+
+  /* ===========================================================
+     ANIMATIONS
+     =========================================================== */
+  @keyframes fadeUp{
+    from{ opacity:0; transform: translateY(10px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  @keyframes cardIn{
+    from{ opacity:0; transform: translateY(6px) scale(.98); }
+    to{ opacity:1; transform: translateY(0) scale(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: .001s !important; transition-duration: .001s !important; }
+  }
+
+  /* Visible keyboard focus for accessibility */
+  button:focus-visible, input:focus-visible{
+    outline: 2px solid var(--purple-bright);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 420px){
+    .wrap{ padding: 32px 16px 80px; }
+    .filter-btn{ font-size: 12.5px; padding: 8px 13px; }
+  }
+</style>
 </head>
 <body>
-    <!-- HEADER -->
-    <header class="header">
-        <h1>🎬 Sorteador de Filmes</h1>
-        <p>Não sabe o que assistir? Deixe o destino decidir!</p>
-    </header>
 
-    <!-- MAIN CONTENT -->
-    <div class="container">
-        <div class="main-content">
-            <!-- LEFT SECTION: INPUT + LISTA -->
-            <section class="section">
-                <!-- INPUT AREA -->
-                <div class="input-area">
-                    <h3>➕ Adicionar Filme</h3>
-                    <div class="input-group">
-                        <input
-                            type="text"
-                            id="filmeInput"
-                            placeholder="Digite o nome do filme..."
-                            aria-label="Nome do filme"
-                        />
-                        <button class="btn btn-primary btn-icon" id="btnAdicionar" aria-label="Adicionar filme">
-                            +
-                        </button>
-                    </div>
-                </div>
+<div class="wrap">
 
-                <!-- MENSAGENS -->
-                <div id="mensagem" class="message" role="alert"></div>
+  <header class="hero">
+    <span class="eyebrow">🎬 sua watchlist, local e privada</span>
+    <h1>Sorteador de <span>Filmes</span></h1>
+    <p class="subtitle">Adicione os filmes que quer assistir e deixe a sorte escolher o próximo da sessão.</p>
+  </header>
 
-                <!-- FILMES LIST -->
-                <div class="filmes-list">
-                    <h3>📽️ Seus Filmes</h3>
-                    <div id="filmesList"></div>
-                </div>
-            </section>
+  <div class="draw-zone">
+    <button id="drawBtn" type="button">
+      <span class="reel">🎞️</span>
+      <span class="label">Sortear Filme</span>
+    </button>
+  </div>
+  <p class="draw-hint" id="drawHint">Sorteia apenas entre os filmes não assistidos</p>
 
-            <!-- RIGHT SECTION: SORTEADOR -->
-            <section class="sorteador-section">
-                <div class="sorteador-card">
-                    <div class="sorteador-icon">🎲</div>
-                    <h2>Sortear Filme</h2>
-                    <p>Clique no botão abaixo para descobrir qual filme você vai assistir hoje!</p>
-                    <button class="btn-sortear" id="btnSortear" aria-label="Sortear um filme">
-                        Sortear Agora
-                    </button>
-                </div>
-            </section>
-        </div>
+  <form class="add-form" id="addForm" novalidate>
+    <input
+      type="text"
+      id="movieInput"
+      placeholder="Nome do filme (ex: Matrix)"
+      maxlength="80"
+      autocomplete="off"
+    >
+    <button type="submit" aria-label="Adicionar filme">+</button>
+  </form>
+  <div class="form-error" id="formError" role="alert"></div>
+
+  <nav class="filters" id="filters">
+    <button class="filter-btn active" data-filter="all" type="button">Todos <span class="count" id="countAll"></span></button>
+    <button class="filter-btn" data-filter="unwatched" type="button">Não Assistidos <span class="count" id="countUnwatched"></span></button>
+    <button class="filter-btn" data-filter="watched" type="button">Assistidos <span class="count" id="countWatched"></span></button>
+  </nav>
+
+  <main class="list" id="list" aria-live="polite"></main>
+
+  <footer>Feito para indecisos. Seus dados ficam apenas neste navegador.</footer>
+</div>
+
+<!-- Modal de resultado do sorteio -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <span class="clapper">🎬</span>
+    <span class="eyebrow">o filme da noite é</span>
+    <h2 id="modalTitle">—</h2>
+    <p class="helper">Boa sessão! Marque como assistido quando terminar.</p>
+    <div class="modal-actions">
+      <button id="modalClose" type="button">Fechar</button>
+      <button id="modalMarkWatched" type="button">Já assisti</button>
     </div>
+  </div>
+</div>
 
-    <!-- MODAL DE RESULTADO -->
-    <div class="modal-overlay" id="modalResultado">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span class="modal-header-icon">🎉</span>
-                <h2>Filme Sorteado!</h2>
-            </div>
-            <div class="modal-body">
-                <p>Aqui está sua recomendação:</p>
-                <div class="filme-sorteado">
-                    <div class="filme-sorteado-nome" id="filmeResultado"></div>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button class="btn-modal btn-fechar" id="btnFecharModal">Fechar</button>
-            </div>
-        </div>
-    </div>
+<!-- Toast de feedback -->
+<div class="toast" id="toast" role="status"></div>
 
-    <!-- SCRIPTS -->
-    <script>
-        // ============================================
-        // CONFIGURAÇÃO E CONSTANTES
-        // ============================================
-        // Use caminho relativo para funcionar em qualquer domínio/ambiente
-        const API_BASE_URL = '/api';
+<script>
+(() => {
+  "use strict";
 
-        // Elementos do DOM
-        const filmeInput = document.getElementById('filmeInput');
-        const btnAdicionar = document.getElementById('btnAdicionar');
-        const btnSortear = document.getElementById('btnSortear');
-        const btnFecharModal = document.getElementById('btnFecharModal');
-        const filmesList = document.getElementById('filmesList');
-        const mensagemDiv = document.getElementById('mensagem');
-        const modalResultado = document.getElementById('modalResultado');
-        const filmeResultado = document.getElementById('filmeResultado');
+  /* =========================================================
+     CONSTANTS & STATE
+     ========================================================= */
+  const STORAGE_KEY = "sorteador-filmes:v1";
+  const form        = document.getElementById("addForm");
+  const input       = document.getElementById("movieInput");
+  const formError   = document.getElementById("formError");
+  const listEl      = document.getElementById("list");
+  const filtersEl   = document.getElementById("filters");
+  const drawBtn     = document.getElementById("drawBtn");
+  const drawHint    = document.getElementById("drawHint");
+  const modalOverlay= document.getElementById("modalOverlay");
+  const modalTitle  = document.getElementById("modalTitle");
+  const modalClose  = document.getElementById("modalClose");
+  const modalMark   = document.getElementById("modalMarkWatched");
+  const toastEl     = document.getElementById("toast");
 
-        // ============================================
-        // FUNÇÕES DE MENSAGENS
-        // ============================================
-        function exibirMensagem(texto, tipo = 'info', duracao = 3000) {
-            mensagemDiv.textContent = texto;
-            mensagemDiv.className = `message show message-${tipo}`;
+  const countAllEl       = document.getElementById("countAll");
+  const countUnwatchedEl = document.getElementById("countUnwatched");
+  const countWatchedEl   = document.getElementById("countWatched");
 
-            if (duracao) {
-                setTimeout(() => {
-                    mensagemDiv.classList.remove('show');
-                }, duracao);
-            }
-        }
+  let movies = [];          // [{ id, title, watched }]
+  let currentFilter = "all"; // 'all' | 'unwatched' | 'watched'
+  let lastDrawnId = null;    // id of the movie currently shown in the modal
 
-        // ============================================
-        // FUNÇÕES DE API
-        // ============================================
+  /* =========================================================
+     UTILITIES
+     ========================================================= */
 
-        /**
-         * Busca todos os filmes da API
-         */
-        async function carregarFilmes() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/filmes`);
-                const data = await response.json();
+  // Escapa HTML para evitar XSS ao renderizar texto vindo do usuário.
+  function escapeHTML(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
 
-                if (data.sucesso) {
-                    renderizarFilmes(data.filmes);
-                } else {
-                    exibirMensagem('Erro ao carregar filmes', 'error');
-                }
-            } catch (erro) {
-                console.error('Erro ao carregar filmes:', erro);
-                exibirMensagem('Erro ao conectar com o servidor', 'error');
-            }
-        }
+  // Gera um id simples e razoavelmente único, sem depender de libs externas.
+  function generateId() {
+    return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  }
 
-        /**
-         * Adiciona um novo filme
-         */
-        async function adicionarFilme(nome) {
-            if (!nome.trim()) {
-                exibirMensagem('Digite o nome de um filme', 'warning');
-                filmeInput.focus();
-                return;
-            }
+  function showToast(message, duration = 2600) {
+    toastEl.textContent = message;
+    toastEl.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toastEl.classList.remove("show"), duration);
+  }
 
-            try {
-                btnAdicionar.disabled = true;
-                btnAdicionar.innerHTML = '<span class="spinner"></span>';
+  function showFormError(message) {
+    formError.textContent = message;
+    if (message) {
+      input.classList.add("invalid");
+      clearTimeout(showFormError._t);
+      showFormError._t = setTimeout(() => { formError.textContent = ""; }, 3000);
+    }
+  }
 
-                const response = await fetch(`${API_BASE_URL}/filmes`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome: nome.trim() }),
-                });
+  /* =========================================================
+     PERSISTENCE (localStorage) — com tratamento de erros
+     ========================================================= */
 
-                const data = await response.json();
+  function loadMovies() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      // Saneamento básico: garante o formato esperado de cada item.
+      return parsed.filter(
+        (m) => m && typeof m.id === "string" && typeof m.title === "string"
+      ).map((m) => ({
+        id: m.id,
+        title: m.title,
+        watched: Boolean(m.watched),
+      }));
+    } catch (err) {
+      console.error("Erro ao carregar filmes do localStorage:", err);
+      showToast("⚠️ Não foi possível ler seus dados salvos.");
+      return [];
+    }
+  }
 
-                if (data.sucesso) {
-                    exibirMensagem('✓ Filme adicionado com sucesso!', 'success');
-                    filmeInput.value = '';
-                    filmeInput.focus();
-                    carregarFilmes();
-                } else {
-                    exibirMensagem(data.mensagem, 'error');
-                }
-            } catch (erro) {
-                console.error('Erro ao adicionar filme:', erro);
-                exibirMensagem('Erro ao adicionar filme', 'error');
-            } finally {
-                btnAdicionar.disabled = false;
-                btnAdicionar.textContent = '+';
-            }
-        }
+  function saveMovies() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(movies));
+      return true;
+    } catch (err) {
+      console.error("Erro ao salvar filmes no localStorage:", err);
+      // Caso comum: quota excedida ou modo privado bloqueando o storage.
+      showToast("⚠️ Não foi possível salvar. Armazenamento indisponível.");
+      return false;
+    }
+  }
 
-        /**
-         * Alterna o status de um filme
-         */
-        async function alternarStatus(id) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/filmes/${id}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                });
+  /* =========================================================
+     BUSINESS LOGIC
+     ========================================================= */
 
-                const data = await response.json();
+  function normalize(title) {
+    return title.trim().toLowerCase();
+  }
 
-                if (data.sucesso) {
-                    exibirMensagem(`✓ ${data.mensagem}`, 'success');
-                    carregarFilmes();
-                } else {
-                    exibirMensagem('Erro ao alterar status', 'error');
-                }
-            } catch (erro) {
-                console.error('Erro ao alterar status:', erro);
-                exibirMensagem('Erro ao alterar status', 'error');
-            }
-        }
+  function isDuplicate(title) {
+    const normalized = normalize(title);
+    return movies.some((m) => normalize(m.title) === normalized);
+  }
 
-        /**
-         * Remove um filme
-         */
-        async function removerFilme(id) {
-            if (!confirm('Tem certeza que deseja remover este filme?')) {
-                return;
-            }
+  function addMovie(rawTitle) {
+    const title = rawTitle.trim();
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/filmes/${id}`, {
-                    method: 'DELETE',
-                });
+    if (!title) {
+      showFormError("Digite o nome de um filme.");
+      return false;
+    }
+    if (isDuplicate(title)) {
+      showFormError("Esse filme já está na sua lista.");
+      return false;
+    }
 
-                const data = await response.json();
+    movies.unshift({ id: generateId(), title, watched: false });
+    saveMovies();
+    render();
+    return true;
+  }
 
-                if (data.sucesso) {
-                    exibirMensagem('✓ Filme removido com sucesso', 'success');
-                    carregarFilmes();
-                } else {
-                    exibirMensagem('Erro ao remover filme', 'error');
-                }
-            } catch (erro) {
-                console.error('Erro ao remover filme:', erro);
-                exibirMensagem('Erro ao remover filme', 'error');
-            }
-        }
+  function removeMovie(id) {
+    movies = movies.filter((m) => m.id !== id);
+    saveMovies();
+    render();
+  }
 
-        /**
-         * REGRA DO SORTEIO: Sorteia um filme não assistido
-         */
-        async function sortearFilme() {
-            try {
-                btnSortear.disabled = true;
-                btnSortear.innerHTML = '<span class="spinner"></span> Sorteando...';
+  function toggleWatched(id) {
+    const movie = movies.find((m) => m.id === id);
+    if (!movie) return;
+    movie.watched = !movie.watched;
+    saveMovies();
+    render();
+  }
 
-                const response = await fetch(`${API_BASE_URL}/sortear`);
-                const data = await response.json();
+  function getFilteredMovies() {
+    if (currentFilter === "unwatched") return movies.filter((m) => !m.watched);
+    if (currentFilter === "watched") return movies.filter((m) => m.watched);
+    return movies;
+  }
 
-                if (data.sucesso && data.filme) {
-                    exibirResultadoSorteio(data.filme);
-                    exibirMensagem('✓ Filme sorteado com sucesso!', 'success', 2000);
-                } else {
-                    exibirMensagem(data.mensagem, 'warning');
-                }
-            } catch (erro) {
-                console.error('Erro ao sortear filme:', erro);
-                exibirMensagem('Erro ao sortear filme', 'error');
-            } finally {
-                btnSortear.disabled = false;
-                btnSortear.textContent = 'Sortear Agora';
-            }
-        }
+  function drawRandomMovie() {
+    const pool = movies.filter((m) => !m.watched);
 
-        /**
-         * Exibe o resultado do sorteio em um modal
-         */
-        function exibirResultadoSorteio(filme) {
-            filmeResultado.textContent = filme.nome;
-            modalResultado.classList.add('active');
-        }
+    if (pool.length === 0) {
+      showToast("🎬 Nenhum filme disponível para sortear!");
+      return;
+    }
 
-        /**
-         * Fecha o modal de resultado
-         */
-        function fecharModal() {
-            modalResultado.classList.remove('active');
-        }
+    // Pequena animação de "rodando o carretel" antes de revelar o resultado.
+    drawBtn.disabled = true;
+    drawBtn.classList.add("spinning");
 
-        // ============================================
-        // RENDERIZAÇÃO DE COMPONENTES
-        // ============================================
+    setTimeout(() => {
+      const chosen = pool[Math.floor(Math.random() * pool.length)];
+      lastDrawnId = chosen.id;
+      openModal(chosen.title);
+      drawBtn.disabled = false;
+      drawBtn.classList.remove("spinning");
+    }, 550);
+  }
 
-        /**
-         * Renderiza a lista de filmes
-         */
-        function renderizarFilmes(filmes) {
-            if (filmes.length === 0) {
-                filmesList.innerHTML = '<div class="list-empty"><p>Nenhum filme cadastrado. Adicione um para começar!</p></div>';
-                return;
-            }
+  /* =========================================================
+     RENDERING
+     ========================================================= */
 
-            filmesList.innerHTML = filmes.map(filme => `
-                <div class="filme-item">
-                    <div class="filme-info">
-                        <div class="filme-nome">${escapeHtml(filme.nome)}</div>
-                        <span class="filme-status ${filme.status === 'Assistido' ? 'assistido' : 'nao-assistido'}">
-                            ${filme.status}
-                        </span>
-                    </div>
-                    <div class="filme-actions">
-                        <button 
-                            class="btn btn-status" 
-                            onclick="alternarStatus('${filme._id}')"
-                            title="Alternar status"
-                        >
-                            ${filme.status === 'Assistido' ? '📌 Marcar como Não Assistido' : '✓ Marcar como Assistido'}
-                        </button>
-                        <button 
-                            class="btn btn-delete" 
-                            onclick="removerFilme('${filme._id}')"
-                            title="Remover filme"
-                        >
-                            🗑️ Remover
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
+  function render() {
+    renderCounts();
+    renderList();
+  }
 
-        /**
-         * Escapa HTML para evitar XSS
-         */
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+  function renderCounts() {
+    const total = movies.length;
+    const unwatched = movies.filter((m) => !m.watched).length;
+    const watched = total - unwatched;
 
-        // ============================================
-        // EVENT LISTENERS
-        // ============================================
-        btnAdicionar.addEventListener('click', () => {
-            adicionarFilme(filmeInput.value);
-        });
+    countAllEl.textContent = total ? `(${total})` : "";
+    countUnwatchedEl.textContent = unwatched ? `(${unwatched})` : "";
+    countWatchedEl.textContent = watched ? `(${watched})` : "";
+  }
 
-        filmeInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                adicionarFilme(filmeInput.value);
-            }
-        });
+  function renderList() {
+    const filtered = getFilteredMovies();
 
-        btnSortear.addEventListener('click', sortearFilme);
+    if (filtered.length === 0) {
+      listEl.innerHTML = renderEmptyState();
+      return;
+    }
 
-        btnFecharModal.addEventListener('click', fecharModal);
+    listEl.innerHTML = filtered.map(renderMovieCard).join("");
+  }
 
-        // Fecha modal ao clicar no overlay
-        modalResultado.addEventListener('click', (e) => {
-            if (e.target === modalResultado) {
-                fecharModal();
-            }
-        });
+  function renderEmptyState() {
+    if (movies.length === 0) {
+      return `
+        <div class="empty-state">
+          <span class="big">🍿</span>
+          Sua lista está vazia.<br>Adicione o primeiro filme acima.
+        </div>`;
+    }
+    if (currentFilter === "unwatched") {
+      return `
+        <div class="empty-state">
+          <span class="big">✅</span>
+          Você já assistiu tudo por aqui!
+        </div>`;
+    }
+    return `
+      <div class="empty-state">
+        <span class="big">👀</span>
+        Nenhum filme assistido ainda.
+      </div>`;
+  }
 
-        // Fecha modal com ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modalResultado.classList.contains('active')) {
-                fecharModal();
-            }
-        });
+  function renderMovieCard(movie) {
+    const safeTitle = escapeHTML(movie.title);
+    const watchedClass = movie.watched ? "watched" : "";
+    const badgeText = movie.watched ? "Assistido" : "Não assistido";
+    const checkMark = movie.watched ? "✓" : "";
 
-        // ============================================
-        // INICIALIZAÇÃO
-        // ============================================
-        document.addEventListener('DOMContentLoaded', () => {
-            carregarFilmes();
-            filmeInput.focus();
-        });
-    </script>
+    return `
+      <article class="movie-card ${watchedClass}" data-id="${movie.id}">
+        <button
+          class="status-toggle"
+          type="button"
+          aria-label="${movie.watched ? "Marcar como não assistido" : "Marcar como assistido"}"
+          data-action="toggle"
+        >${checkMark}</button>
+        <span class="movie-title">${safeTitle}</span>
+        <span class="movie-badge">${badgeText}</span>
+        <button class="delete-btn" type="button" aria-label="Excluir filme" data-action="delete">✕</button>
+      </article>`;
+  }
+
+  /* =========================================================
+     MODAL
+     ========================================================= */
+
+  function openModal(title) {
+    modalTitle.textContent = title;
+    modalOverlay.classList.add("open");
+  }
+
+  function closeModal() {
+    modalOverlay.classList.remove("open");
+    lastDrawnId = null;
+  }
+
+  /* =========================================================
+     EVENT LISTENERS
+     ========================================================= */
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const success = addMovie(input.value);
+    if (success) {
+      input.value = "";
+      input.focus();
+    }
+  });
+
+  input.addEventListener("input", () => {
+    formError.textContent = "";
+  });
+
+  filtersEl.addEventListener("click", (e) => {
+    const btn = e.target.closest(".filter-btn");
+    if (!btn) return;
+    currentFilter = btn.dataset.filter;
+    document.querySelectorAll(".filter-btn").forEach((b) => b.classList.toggle("active", b === btn));
+    renderList();
+  });
+
+  listEl.addEventListener("click", (e) => {
+    const card = e.target.closest(".movie-card");
+    if (!card) return;
+    const id = card.dataset.id;
+    const action = e.target.closest("[data-action]")?.dataset.action;
+
+    if (action === "toggle") toggleWatched(id);
+    if (action === "delete") removeMovie(id);
+  });
+
+  drawBtn.addEventListener("click", drawRandomMovie);
+
+  modalClose.addEventListener("click", closeModal);
+  modalOverlay.addEventListener("click", (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modalOverlay.classList.contains("open")) closeModal();
+  });
+
+  modalMark.addEventListener("click", () => {
+    if (lastDrawnId) {
+      const movie = movies.find((m) => m.id === lastDrawnId);
+      if (movie) {
+        movie.watched = true;
+        saveMovies();
+        render();
+      }
+    }
+    closeModal();
+  });
+
+  /* =========================================================
+     INIT
+     ========================================================= */
+
+  function init() {
+    movies = loadMovies();
+    render();
+  }
+
+  init();
+})();
+</script>
+
 </body>
 </html>
