@@ -1,96 +1,269 @@
-# 🎬 Sorteador de Filmes
+# 🎬 Sorteador de Filmes Compartilhado
 
-Aplicação web minimalista para gerenciar sua lista de filmes e sortear aleatoriamente qual assistir. Sem backend, sem banco de dados — tudo roda no navegador.
-
-![Status](https://img.shields.io/badge/status-pronto-8b5cf6) ![Stack](https://img.shields.io/badge/stack-HTML%20%7C%20CSS%20%7C%20JS-0a0a0a)
-
----
+Uma aplicação web para criar listas compartilhadas de filmes, sincronizadas em tempo real, permitindo que amigos, casais ou grupos organizem o que assistir e realizem sorteios aleatórios entre os filmes disponíveis.
 
 ## ✨ Funcionalidades
 
-- **Adicionar filmes** com validação de campo vazio e bloqueio de duplicatas (case-insensitive)
-- **Listar** com filtros rápidos: Todos / Não Assistidos / Assistidos
-- **Alternar status** (assistido / não assistido) com um clique
-- **Excluir** filmes da lista
-- **Sortear** um filme aleatório entre os não assistidos, com feedback visual em modal
-- **Persistência local**: tudo é salvo no `localStorage` do navegador — seus dados não saem da sua máquina
+### 🔐 Autenticação
 
-## 🛠️ Tecnologias
+* Login com e-mail e senha
+* Cadastro de novos usuários
+* Login com Google
+* Persistência de sessão
 
-- HTML5 semântico
-- CSS3 (Variáveis CSS, Flexbox/Grid, animações)
-- JavaScript Vanilla (ES6+), sem frameworks ou dependências externas
+### 👥 Listas Compartilhadas
 
-Nenhuma instalação, build step ou servidor é necessária.
+* Criação de listas através de código único
+* Entrada em listas existentes utilizando código
+* Sincronização em tempo real entre todos os participantes
+* Alterações instantâneas para todos os usuários conectados
 
-## 📁 Estrutura do projeto
+### 🎥 Gerenciamento de Filmes
 
+* Adicionar filmes à lista
+* Remover filmes da lista
+* Evitar duplicidade de filmes
+* Busca automática de pôsteres através da API do TMDB
+* Pesquisa por nome do filme
+* Filtros de visualização
+
+### 📋 Filtros Disponíveis
+
+* Todos os filmes
+* Não assistidos
+* Assistidos
+
+### 🎲 Sorteio Inteligente
+
+* Sorteia apenas filmes não assistidos
+* Animação de suspense estilo roleta
+* Exibição do pôster do filme sorteado
+* Modal com destaque para o filme escolhido
+
+### ☁️ Sincronização em Tempo Real
+
+Todas as alterações são armazenadas no Firebase Firestore e sincronizadas automaticamente para todos os participantes da lista.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+### Frontend
+
+* HTML5
+* CSS3
+* JavaScript (ES Modules)
+
+### Backend / Serviços
+
+* Firebase Authentication
+* Firebase Firestore
+* TMDB API
+
+### APIs
+
+* The Movie Database (TMDB)
+
+---
+
+## 📂 Estrutura Atual
+
+```text
+index.html
 ```
-sorteador-de-filmes/
-└── index.html   # HTML + CSS + JS, tudo em um único arquivo
-```
 
-## 🚀 Como rodar localmente
+Todo o projeto está concentrado em um único arquivo contendo:
 
-Basta abrir o arquivo no navegador:
+* Interface
+* Estilos
+* Integração Firebase
+* Integração TMDB
+* Regras de negócio
+
+---
+
+## ⚙️ Configuração do Projeto
+
+### 1. Clonar o repositório
 
 ```bash
-# Opção 1: abrir direto
-open index.html        # macOS
-start index.html       # Windows
-xdg-open index.html    # Linux
-
-# Opção 2: servir localmente (opcional, útil para evitar restrições de file://)
-npx serve .
-# ou
-python3 -m http.server 8080
+git clone https://github.com/seu-usuario/seu-repositorio.git
 ```
 
-## 🌐 Deploy (custo zero)
+### 2. Criar projeto no Firebase
 
-Por não ter backend, o projeto pode ser hospedado em qualquer serviço de arquivos estáticos:
+Acesse:
 
-### GitHub Pages
-1. Suba o repositório no GitHub
-2. Vá em **Settings → Pages**
-3. Selecione a branch (ex: `main`) e a pasta raiz (`/`)
-4. Pronto — a URL será `https://seu-usuario.github.io/seu-repo/`
+https://console.firebase.google.com
 
-### Vercel
-1. Importe o repositório em [vercel.com/new](https://vercel.com/new)
-2. Nenhuma configuração de build é necessária (é HTML estático)
-3. Deploy automático a cada push
+Configure:
 
-### Netlify
-1. Arraste a pasta do projeto em [app.netlify.com/drop](https://app.netlify.com/drop), ou conecte o repositório
-2. Build command: vazio | Publish directory: `/`
+* Authentication
+* Firestore Database
 
-## 💾 Sobre a persistência de dados
+### 3. Habilitar autenticação
 
-Os filmes cadastrados ficam salvos no `localStorage` do navegador, sob a chave `sorteador-filmes:v1`. Isso significa:
+No Firebase Authentication:
 
-- Os dados **não são sincronizados** entre dispositivos ou navegadores diferentes
-- Limpar o cache/dados do site apaga a lista
-- Não há coleta nem envio de dados a servidores externos — tudo é 100% local e privado
+* Email/Senha
+* Google
 
-## 🎨 Design
+### 4. Configurar Firestore
 
-| Token | Valor |
-|---|---|
-| Fundo | `#0a0a0a` |
-| Destaque (roxo neon) | `#8b5cf6` |
-| Texto principal | `#ffffff` |
-| Texto secundário | `#9a9aa2` |
+Estrutura utilizada:
 
-Inspirado em interfaces minimalistas modernas, com cantos arredondados, glow sutil nos botões de ação e transições suaves. Totalmente responsivo (mobile e desktop).
+```text
+lists
+ └── CODIGO_DA_LISTA
+      └── movies
+           └── FILME
+```
 
-## 🧩 Possíveis melhorias futuras
+Documento de filme:
 
-- Edição do nome de um filme já cadastrado
-- Categorias/gêneros e filtro por gênero
-- Exportar/importar a lista em JSON
-- Modo de "sorteio ponderado" (favoritos com mais chance de serem sorteados)
+```json
+{
+  "title": "Interestelar",
+  "watched": false,
+  "posterUrl": "https://...",
+  "createdAt": "timestamp"
+}
+```
+
+### 5. Configurar API do TMDB
+
+Crie uma conta:
+
+https://www.themoviedb.org
+
+Gere uma API Key e substitua:
+
+```javascript
+const TMDB_API_KEY = "SUA_API_KEY";
+```
+
+---
+
+## 🚀 Executando o Projeto
+
+Como o projeto utiliza módulos JavaScript, recomenda-se executar através de um servidor local.
+
+Exemplo com VS Code:
+
+1. Instale a extensão Live Server.
+2. Clique em "Open with Live Server".
+
+Ou:
+
+```bash
+python -m http.server 8000
+```
+
+Acesse:
+
+```text
+http://localhost:8000
+```
+
+---
+
+## 🔮 Melhorias Futuras
+
+### Sistema de Avaliações
+
+Cada usuário poderá atribuir uma nota:
+
+```json
+{
+  "ratings": {
+    "uid1": 5,
+    "uid2": 4,
+    "uid3": 5
+  }
+}
+```
+
+Com cálculo automático da média.
+
+### Modal de Informações
+
+Exibir:
+
+* Sinopse
+* Gêneros
+* Ano de lançamento
+* Duração
+* Nota TMDB
+* Avaliações dos participantes
+
+### Comentários
+
+Sistema de comentários compartilhados por filme.
+
+### Status Avançados
+
+Substituir:
+
+```json
+{
+  "watched": true
+}
+```
+
+por:
+
+```json
+{
+  "status": "watched"
+}
+```
+
+Possíveis status:
+
+* unwatched
+* watching
+* watched
+* abandoned
+
+### Refatoração
+
+Separação em módulos:
+
+```text
+src/
+├── css/
+│   └── styles.css
+├── js/
+│   ├── firebase.js
+│   ├── auth.js
+│   ├── movies.js
+│   ├── ui.js
+│   └── tmdb.js
+└── index.html
+```
+
+---
+
+## 📸 Capturas de Tela
+
+Adicione aqui imagens da aplicação em funcionamento.
+
+```markdown
+![Tela Principal](./screenshots/home.png)
+![Sorteio](./screenshots/draw.png)
+```
+
+---
 
 ## 📄 Licença
 
-Livre para uso, modificação e distribuição.
+Este projeto foi desenvolvido para fins de estudo e uso pessoal.
+
+---
+
+## 👨‍💻 Autor
+
+Lucas Alves Lougon
+
+GitHub:
+https://github.com/LucasAlvesLougon
