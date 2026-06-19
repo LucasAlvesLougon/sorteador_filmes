@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteador de Filmes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-secondary: #141414;
+            --border-color: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-primary: #8b5cf6;
+            --accent-hover: #a78bfa;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #0f0f0f 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ============================================
+           HEADER / HERO SECTION
+           ============================================ */
+        .header {
+            position: relative;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(180deg, rgba(139, 92, 246, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -1.5px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           CONTAINER & GRID
+           ============================================ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 3rem 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        /* ============================================
+           LEFT SECTION: INPUT & LISTA
+           ============================================ */
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* ============================================
+           INPUT AREA
+           ============================================ */
+        .input-area {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+        }
+
+        .input-area:focus-within {
+            border-color: var(--accent-primary);
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.15);
+        }
+
+        .input-area h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        #filmeInput {
+            flex: 1;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.875rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        #filmeInput:focus {
+            border-color: var(--accent-primary);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        #filmeInput::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: 8px;
+        }
+
+        /* ============================================
+           FILMES LIST
+           ============================================ */
+        .filmes-list {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .filmes-list h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        .filme-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: var(--transition);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .filme-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .filme-item:hover {
+            border-color: var(--accent-primary);
+            background: rgba(139, 92, 246, 0.03);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);
+        }
+
+        .filme-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            flex: 1;
+        }
+
+        .filme-nome {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .filme-status {
+            font-size: 0.85rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            width: fit-content;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .filme-status.nao-assistido {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .filme-status.assistido {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .filme-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-status {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--accent-primary);
+            border: 1px solid var(--accent-primary);
+        }
+
+        .btn-status:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .btn-delete {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .btn-delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .list-empty {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .list-empty p {
+            font-size: 0.95rem;
+        }
+
+        /* ============================================
+           SORTEADOR SECTION (RIGHT)
+           ============================================ */
+        .sorteador-section {
+            position: relative;
+            min-height: 500px;
+        }
+
+        .sorteador-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            box-shadow: 0 20px 48px rgba(139, 92, 246, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            height: 100%;
+            min-height: 500px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .sorteador-card:hover {
+            border-color: var(--accent-primary);
+            box-shadow: 0 24px 56px rgba(139, 92, 246, 0.2);
+        }
+
+        .sorteador-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .sorteador-card h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .sorteador-card p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 300px;
+            line-height: 1.6;
+        }
+
+        .btn-sortear {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
+            color: white;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            box-shadow: 0 12px 32px rgba(139, 92, 246, 0.3);
+            min-width: 250px;
+            text-transform: uppercase;
+        }
+
+        .btn-sortear:hover:not(:disabled) {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-sortear:active:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .btn-sortear:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ============================================
+           RESULTADO DO SORTEIO (MODAL/OVERLAY)
+           ============================================ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, #1a1a1a 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            animation: slideInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header-icon {
+            font-size: 2.5rem;
+            animation: spin 0.8s ease-out;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(-180deg) scale(0.5);
+            }
+            to {
+                transform: rotate(0) scale(1);
+            }
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-body {
+            margin: 2rem 0;
+        }
+
+        .filme-sorteado {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 2px solid var(--accent-primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .filme-sorteado-nome {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            word-break: break-word;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 0.875rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-fechar {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .btn-fechar:hover {
+            background: var(--bg-dark);
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        /* ============================================
+           MENSAGENS (LOADING, ERROR, SUCCESS)
+           ============================================ */
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            animation: slideInDown 0.3s ease-out;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message-success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .message-error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .message-warning {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+        }
+
+        .message-info {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid #3b82f6;
+            color: #3b82f6;
+        }
+
+        /* ============================================
+           SPINNER / LOADING
+           ============================================ */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(139, 92, 246, 0.3);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin-loader 0.8s linear infinite;
+        }
+
+        @keyframes spin-loader {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ============================================
+           RESPONSIVIDADE
+           ============================================ */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .sorteador-card {
+                min-height: 400px;
+            }
+
+            .modal-content {
+                margin: 1rem;
+                padding: 2rem 1.5rem;
+                max-width: 90vw;
+            }
+
+            .btn-sortear {
+                width: 100%;
+                min-width: unset;
+            }
+
+            .filme-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .filme-actions {
+                width: 100%;
+            }
+
+            .btn-status,
+            .btn-delete {
+                flex: 1;
+            }
+        }
+
+        /* ============================================
+           ACESSIBILIDADE
+           ============================================ */
+        button:focus {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <h1>🎬 Sorteador de Filmes</h1>
+        <p>Não sabe o que assistir? Deixe o destino decidir!</p>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+        <div class="main-content">
+            <!-- LEFT SECTION: INPUT + LISTA -->
+            <section class="section">
+                <!-- INPUT AREA -->
+                <div class="input-area">
+                    <h3>➕ Adicionar Filme</h3>
+                    <div class="input-group">
+                        <input
+                            type="text"
+                            id="filmeInput"
+                            placeholder="Digite o nome do filme..."
+                            aria-label="Nome do filme"
+                        />
+                        <button class="btn btn-primary btn-icon" id="btnAdicionar" aria-label="Adicionar filme">
+                            +
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MENSAGENS -->
+                <div id="mensagem" class="message" role="alert"></div>
+
+                <!-- FILMES LIST -->
+                <div class="filmes-list">
+                    <h3>📽️ Seus Filmes</h3>
+                    <div id="filmesList"></div>
+                </div>
+            </section>
+
+            <!-- RIGHT SECTION: SORTEADOR -->
+            <section class="sorteador-section">
+                <div class="sorteador-card">
+                    <div class="sorteador-icon">🎲</div>
+                    <h2>Sortear Filme</h2>
+                    <p>Clique no botão abaixo para descobrir qual filme você vai assistir hoje!</p>
+                    <button class="btn-sortear" id="btnSortear" aria-label="Sortear um filme">
+                        Sortear Agora
+                    </button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- MODAL DE RESULTADO -->
+    <div class="modal-overlay" id="modalResultado">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-header-icon">🎉</span>
+                <h2>Filme Sorteado!</h2>
+            </div>
+            <div class="modal-body">
+                <p>Aqui está sua recomendação:</p>
+                <div class="filme-sorteado">
+                    <div class="filme-sorteado-nome" id="filmeResultado"></div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-modal btn-fechar" id="btnFecharModal">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // ============================================
+        // CONFIGURAÇÃO E CONSTANTES
+        // ============================================
+        // Use caminho relativo para funcionar em qualquer domínio/ambiente
+        const API_BASE_URL = '/api';
+
+        // Elementos do DOM
+        const filmeInput = document.getElementById('filmeInput');
+        const btnAdicionar = document.getElementById('btnAdicionar');
+        const btnSortear = document.getElementById('btnSortear');
+        const btnFecharModal = document.getElementById('btnFecharModal');
+        const filmesList = document.getElementById('filmesList');
+        const mensagemDiv = document.getElementById('mensagem');
+        const modalResultado = document.getElementById('modalResultado');
+        const filmeResultado = document.getElementById('filmeResultado');
+
+        // ============================================
+        // FUNÇÕES DE MENSAGENS
+        // ============================================
+        function exibirMensagem(texto, tipo = 'info', duracao = 3000) {
+            mensagemDiv.textContent = texto;
+            mensagemDiv.className = `message show message-${tipo}`;
+
+            if (duracao) {
+                setTimeout(() => {
+                    mensagemDiv.classList.remove('show');
+                }, duracao);
+            }
+        }
+
+        // ============================================
+        // FUNÇÕES DE API
+        // ============================================
+
+        /**
+         * Busca todos os filmes da API
+         */
+        async function carregarFilmes() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/filmes`);
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    renderizarFilmes(data.filmes);
+                } else {
+                    exibirMensagem('Erro ao carregar filmes', 'error');
+                }
+            } catch (erro) {
+                console.error('Erro ao carregar filmes:', erro);
+                exibirMensagem('Erro ao conectar com o servidor', 'error');
+            }
+        }
+
+        /**
+         * Adiciona um novo filme
+         */
+        async function adicionarFilme(nome) {
+            if (!nome.trim()) {
+                exibirMensagem('Digite o nome de um filme', 'warning');
+                filmeInput.focus();
+                return;
+            }
+
+            try {
+                btnAdicionar.disabled = true;
+                btnAdicionar.innerHTML = '<span class="spinner"></span>';
+
+                const response = await fetch(`${API_BASE_URL}/filmes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome: nome.trim() }),
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    exibirMensagem('✓ Filme adicionado com sucesso!', 'success');
+                    filmeInput.value = '';
+                    filmeInput.focus();
+                    carregarFilmes();
+                } else {
+                    exibirMensagem(data.mensagem, 'error');
+                }
+            } catch (erro) {
+                console.error('Erro ao adicionar filme:', erro);
+                exibirMensagem('Erro ao adicionar filme', 'error');
+            } finally {
+                btnAdicionar.disabled = false;
+                btnAdicionar.textContent = '+';
+            }
+        }
+
+        /**
+         * Alterna o status de um filme
+         */
+        async function alternarStatus(id) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/filmes/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    exibirMensagem(`✓ ${data.mensagem}`, 'success');
+                    carregarFilmes();
+                } else {
+                    exibirMensagem('Erro ao alterar status', 'error');
+                }
+            } catch (erro) {
+                console.error('Erro ao alterar status:', erro);
+                exibirMensagem('Erro ao alterar status', 'error');
+            }
+        }
+
+        /**
+         * Remove um filme
+         */
+        async function removerFilme(id) {
+            if (!confirm('Tem certeza que deseja remover este filme?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/filmes/${id}`, {
+                    method: 'DELETE',
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    exibirMensagem('✓ Filme removido com sucesso', 'success');
+                    carregarFilmes();
+                } else {
+                    exibirMensagem('Erro ao remover filme', 'error');
+                }
+            } catch (erro) {
+                console.error('Erro ao remover filme:', erro);
+                exibirMensagem('Erro ao remover filme', 'error');
+            }
+        }
+
+        /**
+         * REGRA DO SORTEIO: Sorteia um filme não assistido
+         */
+        async function sortearFilme() {
+            try {
+                btnSortear.disabled = true;
+                btnSortear.innerHTML = '<span class="spinner"></span> Sorteando...';
+
+                const response = await fetch(`${API_BASE_URL}/sortear`);
+                const data = await response.json();
+
+                if (data.sucesso && data.filme) {
+                    exibirResultadoSorteio(data.filme);
+                    exibirMensagem('✓ Filme sorteado com sucesso!', 'success', 2000);
+                } else {
+                    exibirMensagem(data.mensagem, 'warning');
+                }
+            } catch (erro) {
+                console.error('Erro ao sortear filme:', erro);
+                exibirMensagem('Erro ao sortear filme', 'error');
+            } finally {
+                btnSortear.disabled = false;
+                btnSortear.textContent = 'Sortear Agora';
+            }
+        }
+
+        /**
+         * Exibe o resultado do sorteio em um modal
+         */
+        function exibirResultadoSorteio(filme) {
+            filmeResultado.textContent = filme.nome;
+            modalResultado.classList.add('active');
+        }
+
+        /**
+         * Fecha o modal de resultado
+         */
+        function fecharModal() {
+            modalResultado.classList.remove('active');
+        }
+
+        // ============================================
+        // RENDERIZAÇÃO DE COMPONENTES
+        // ============================================
+
+        /**
+         * Renderiza a lista de filmes
+         */
+        function renderizarFilmes(filmes) {
+            if (filmes.length === 0) {
+                filmesList.innerHTML = '<div class="list-empty"><p>Nenhum filme cadastrado. Adicione um para começar!</p></div>';
+                return;
+            }
+
+            filmesList.innerHTML = filmes.map(filme => `
+                <div class="filme-item">
+                    <div class="filme-info">
+                        <div class="filme-nome">${escapeHtml(filme.nome)}</div>
+                        <span class="filme-status ${filme.status === 'Assistido' ? 'assistido' : 'nao-assistido'}">
+                            ${filme.status}
+                        </span>
+                    </div>
+                    <div class="filme-actions">
+                        <button 
+                            class="btn btn-status" 
+                            onclick="alternarStatus('${filme._id}')"
+                            title="Alternar status"
+                        >
+                            ${filme.status === 'Assistido' ? '📌 Marcar como Não Assistido' : '✓ Marcar como Assistido'}
+                        </button>
+                        <button 
+                            class="btn btn-delete" 
+                            onclick="removerFilme('${filme._id}')"
+                            title="Remover filme"
+                        >
+                            🗑️ Remover
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /**
+         * Escapa HTML para evitar XSS
+         */
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+        btnAdicionar.addEventListener('click', () => {
+            adicionarFilme(filmeInput.value);
+        });
+
+        filmeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                adicionarFilme(filmeInput.value);
+            }
+        });
+
+        btnSortear.addEventListener('click', sortearFilme);
+
+        btnFecharModal.addEventListener('click', fecharModal);
+
+        // Fecha modal ao clicar no overlay
+        modalResultado.addEventListener('click', (e) => {
+            if (e.target === modalResultado) {
+                fecharModal();
+            }
+        });
+
+        // Fecha modal com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalResultado.classList.contains('active')) {
+                fecharModal();
+            }
+        });
+
+        // ============================================
+        // INICIALIZAÇÃO
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarFilmes();
+            filmeInput.focus();
+        });
+    </script>
+</body>
+</html>
