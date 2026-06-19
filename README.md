@@ -204,8 +204,8 @@ npx serve .
 Adicione aqui imagens da aplicação em funcionamento.
 
 ```markdown
-![Tela Principal](./screenshots/home.png)
-![Sorteio](./screenshots/draw.png)
+![Tela Principal](./resources/screenshots/home.png)
+![Autenticação](./resources/screenshots/authentication.png)
 ```
 
 ---
