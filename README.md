@@ -201,12 +201,8 @@ npx serve .
 
 ## 📸 Capturas de Tela
 
-Adicione aqui imagens da aplicação em funcionamento.
-
-```markdown
 ![Tela Principal](./resources/screenshots/home.png)
 ![Autenticação](./resources/screenshots/authentication.png)
-```
 
 ---
 
