@@ -330,6 +330,17 @@
 
     footer { text-align: center; margin-top: 56px; color: var(--text-faint); font-size: 12.5px; }
 
+    /* Animação de suspense para o botão de sorteio */
+    @keyframes pulse-suspense {
+      0% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.05); filter: brightness(1.2); box-shadow: 0 0 25px var(--purple-bright); }
+      100% { transform: scale(1); filter: brightness(1); }
+    }
+
+    .suspense-active {
+      animation: pulse-suspense 0.15s infinite ease-in-out !important;
+      background: linear-gradient(135deg, #a78bfa, #8b5cf6) !important;
+    }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes cardIn { from { opacity: 0; transform: translateY(6px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
     @media (prefers-reduced-motion: reduce) { * { animation-duration: .001s !important; transition-duration: .001s !important; } }
@@ -774,16 +785,60 @@
       const pool = movies.filter((m) => !m.watched);
       if (pool.length === 0) return showToast("🎬 Nenhum filme para sortear!");
 
+      const labelEl = drawBtn.querySelector(".label");
+      const reelEl = drawBtn.querySelector(".reel");
+      const originalLabel = "Sortear Filme";
+      const originalReel = "🎞️";
+
+      // Desativa o botão e ativa a animação visual de suspense
       drawBtn.disabled = true;
-      drawBtn.classList.add("spinning");
-      setTimeout(() => {
-        const chosen = pool[Math.floor(Math.random() * pool.length)];
-        lastDrawnId = chosen.id;
-        modalTitle.textContent = chosen.title;
-        modalOverlay.classList.add("open");
-        drawBtn.disabled = false;
-        drawBtn.classList.remove("spinning");
-      }, 550);
+      drawBtn.classList.add("suspense-active");
+      
+      const emojis = ["🎬", "🍿", "🎥", "🎞️", "⭐", "📺", "🎫"];
+      let elapsed = 0;
+      const duration = 3000; // Tempo total do suspense (3 segundos)
+      let currentInterval = 150; // Velocidade inicial de troca dos filmes (milissegundos)
+
+      function shuffleEffect() {
+        // Escolhe um filme e um emoji aleatório da sua lista para o efeito de roleta
+        const randomMovie = pool[Math.floor(Math.random() * pool.length)];
+        const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+        
+        labelEl.textContent = randomMovie.title;
+        reelEl.textContent = randomEmoji;
+        
+        elapsed += currentInterval;
+        
+        // Efeito de desaceleração dramática perto do final do tempo
+        if (elapsed > duration * 0.75) {
+          currentInterval = 120; // Deixa os filmes passarem mais devagar no finalzinho
+        }
+        if (elapsed > duration * 0.9) {
+          currentInterval = 220; // Quase parando...
+        }
+
+        if (elapsed < duration) {
+          // Continua rodando a roleta
+          setTimeout(shuffleEffect, currentInterval);
+        } else {
+          // FIM DO SUSPENSE: Define o ganhador oficial
+          const chosen = pool[Math.floor(Math.random() * pool.length)];
+          lastDrawnId = chosen.id;
+          
+          // Abre o modal com o resultado final
+          modalTitle.textContent = chosen.title;
+          modalOverlay.classList.add("open");
+          
+          // Reseta o botão para o estado normal de cliques
+          drawBtn.disabled = false;
+          drawBtn.classList.remove("suspense-active");
+          labelEl.textContent = originalLabel;
+          reelEl.textContent = originalReel;
+        }
+      }
+
+      // Inicia o efeito
+      shuffleEffect();
     }
 
     form.addEventListener("submit", async (e) => {
