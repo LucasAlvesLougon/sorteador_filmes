@@ -29,13 +29,8 @@
       --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      color-scheme: dark;
-    }
+    * { box-sizing: border-box; }
+    html { color-scheme: dark; }
 
     body {
       margin: 0;
@@ -56,13 +51,10 @@
       padding: 48px 20px 96px;
     }
 
-    /* Controladores de exibição de telas */
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
 
     /* ===========================================================
-     AUTH SCREEN (Login / Cadastro)
+     AUTH & LIST SCREENS (Containers centrais)
      =========================================================== */
     .auth-container {
       max-width: 380px;
@@ -126,7 +118,7 @@
       box-shadow: 0 0 0 3px var(--purple-dim);
     }
 
-    .auth-form button[type="submit"] {
+    .btn-primary {
       background: var(--purple);
       color: #fff;
       border: none;
@@ -137,16 +129,29 @@
       border-radius: var(--radius-sm);
       cursor: pointer;
       transition: background .15s ease, transform .15s ease;
-      margin-top: 8px;
     }
 
-    .auth-form button[type="submit"]:hover {
+    .btn-primary:hover {
       background: var(--purple-bright);
       transform: translateY(-1px);
     }
 
-    .auth-form button[type="submit"]:active {
-      transform: translateY(0);
+    .btn-secondary {
+      background: var(--bg-elevated);
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background .15s ease, transform .15s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #252529;
+      transform: translateY(-1px);
     }
 
     .auth-switch {
@@ -165,6 +170,15 @@
       cursor: pointer;
       text-decoration: underline;
       padding: 0 4px;
+    }
+
+    .divider {
+      text-align: center; 
+      color: var(--text-faint); 
+      font-size: 12px; 
+      text-transform: uppercase; 
+      letter-spacing: 0.05em;
+      margin: 16px 0;
     }
 
     /* ===========================================================
@@ -192,10 +206,16 @@
     }
 
     .user-info strong {
-      color: var(--text);
+      color: var(--purple-bright);
+      letter-spacing: 0.05em;
     }
 
-    .logout-btn {
+    .user-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .logout-btn, .leave-list-btn {
       background: transparent;
       border: none;
       color: var(--text-faint);
@@ -205,536 +225,116 @@
       transition: color .15s ease;
     }
 
-    .logout-btn:hover {
-      color: var(--red);
-    }
+    .leave-list-btn:hover { color: var(--text); }
+    .logout-btn:hover { color: var(--red); }
 
     /* ===========================================================
-     HEADER / HERO
+     HEADER & APP COMPONENTS (Mantido o design anterior)
      =========================================================== */
-    header.hero {
-      text-align: center;
-      margin-bottom: 36px;
-      animation: fadeUp .6s ease both;
-    }
-
+    header.hero { text-align: center; margin-bottom: 36px; animation: fadeUp .6s ease both; }
     .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--purple-bright);
-      background: var(--purple-dim);
-      border: 1px solid rgba(139, 92, 246, .25);
-      padding: 6px 14px;
-      border-radius: 999px;
-      margin-bottom: 18px;
+      display: inline-flex; align-items: center; gap: 8px; font-size: 12px; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--purple-bright); background: var(--purple-dim);
+      border: 1px solid rgba(139, 92, 246, .25); padding: 6px 14px; border-radius: 999px; margin-bottom: 18px;
     }
+    h1 { font-size: clamp(28px, 5vw, 40px); margin: 0 0 8px; font-weight: 700; letter-spacing: -0.02em; }
+    h1 span { background: linear-gradient(135deg, var(--purple-bright), var(--purple)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .subtitle { color: var(--text-secondary); font-size: 15px; max-width: 420px; margin: 0 auto; }
 
-    h1 {
-      font-size: clamp(28px, 5vw, 40px);
-      margin: 0 0 8px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    h1 span {
-      background: linear-gradient(135deg, var(--purple-bright), var(--purple));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .subtitle {
-      color: var(--text-secondary);
-      font-size: 15px;
-      max-width: 420px;
-      margin: 0 auto;
-    }
-
-    /* ===========================================================
-     SORTEAR BUTTON
-     =========================================================== */
-    .draw-zone {
-      display: flex;
-      justify-content: center;
-      margin: 32px 0 36px;
-    }
-
+    .draw-zone { display: flex; justify-content: center; margin: 32px 0 36px; }
     #drawBtn {
-      position: relative;
-      appearance: none;
-      border: none;
-      cursor: pointer;
-      color: #fff;
-      font-family: inherit;
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: .01em;
-      padding: 16px 36px;
-      border-radius: 999px;
+      position: relative; appearance: none; border: none; cursor: pointer; color: #fff; font-family: inherit;
+      font-size: 16px; font-weight: 600; letter-spacing: .01em; padding: 16px 36px; border-radius: 999px;
       background: linear-gradient(135deg, var(--purple-bright), var(--purple) 60%, #6d28d9);
-      box-shadow: var(--glow);
-      transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      box-shadow: var(--glow); transition: transform .18s ease, box-shadow .18s ease, filter .18s ease; display: flex; align-items: center; gap: 10px;
     }
+    #drawBtn:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(139, 92, 246, .3), 0 14px 32px -8px rgba(139, 92, 246, .65); }
+    #drawBtn:active { transform: translateY(0) scale(.98); }
+    #drawBtn:disabled { filter: grayscale(.6) brightness(.6); cursor: not-allowed; transform: none; box-shadow: none; }
+    #drawBtn .reel { font-size: 18px; transition: transform .5s cubic-bezier(.3, 1.4, .5, 1); }
+    #drawBtn.spinning .reel { animation: spin .6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .draw-hint { text-align: center; color: var(--text-faint); font-size: 13px; margin-top: -22px; margin-bottom: 32px; }
 
-    #drawBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 0 1px rgba(139, 92, 246, .3), 0 14px 32px -8px rgba(139, 92, 246, .65);
-    }
-
-    #drawBtn:active {
-      transform: translateY(0) scale(.98);
-    }
-
-    #drawBtn:disabled {
-      filter: grayscale(.6) brightness(.6);
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    #drawBtn .reel {
-      font-size: 18px;
-      transition: transform .5s cubic-bezier(.3, 1.4, .5, 1);
-    }
-
-    #drawBtn.spinning .reel {
-      animation: spin .6s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .draw-hint {
-      text-align: center;
-      color: var(--text-faint);
-      font-size: 13px;
-      margin-top: -22px;
-      margin-bottom: 32px;
-    }
-
-    /* ===========================================================
-     ADD FORM
-     =========================================================== */
-    .add-form {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 22px;
-      animation: fadeUp .6s ease .05s both;
-    }
-
+    .add-form { display: flex; gap: 10px; margin-bottom: 22px; animation: fadeUp .6s ease .05s both; }
     .add-form input[type="text"] {
-      flex: 1;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: inherit;
-      font-size: 15px;
-      padding: 14px 16px;
-      border-radius: var(--radius-sm);
-      outline: none;
-      transition: border-color .15s ease, box-shadow .15s ease;
+      flex: 1; background: var(--bg-card); border: 1px solid var(--border); color: var(--text);
+      font-family: inherit; font-size: 15px; padding: 14px 16px; border-radius: var(--radius-sm); outline: none; transition: border-color .15s ease, box-shadow .15s ease;
     }
-
-    .add-form input[type="text"]::placeholder {
-      color: var(--text-faint);
-    }
-
-    .add-form input[type="text"]:focus {
-      border-color: var(--purple);
-      box-shadow: 0 0 0 3px var(--purple-dim);
-    }
-
+    .add-form input[type="text"]:focus { border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-dim); }
     .add-form button {
-      flex-shrink: 0;
-      width: 50px;
-      border: none;
-      border-radius: var(--radius-sm);
-      background: var(--purple);
-      color: #fff;
-      font-size: 22px;
-      font-weight: 300;
-      line-height: 1;
-      cursor: pointer;
-      transition: background .15s ease, transform .15s ease;
+      flex-shrink: 0; width: 50px; border: none; border-radius: var(--radius-sm); background: var(--purple);
+      color: #fff; font-size: 22px; font-weight: 300; line-height: 1; cursor: pointer; transition: background .15s ease, transform .15s ease;
     }
+    .add-form button:hover { background: var(--purple-bright); transform: translateY(-1px); }
+    .form-error { color: var(--red); font-size: 13px; margin: -12px 0 18px; min-height: 18px; animation: fadeUp .25s ease both; }
 
-    .add-form button:hover {
-      background: var(--purple-bright);
-      transform: translateY(-1px);
-    }
-
-    .add-form button:active {
-      transform: translateY(0);
-    }
-
-    .form-error {
-      color: var(--red);
-      font-size: 13px;
-      margin: -12px 0 18px;
-      min-height: 18px;
-      animation: fadeUp .25s ease both;
-    }
-
-    /* ===========================================================
-     FILTERS
-     =========================================================== */
-    .filters {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-      animation: fadeUp .6s ease .1s both;
-    }
-
+    .filters { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; animation: fadeUp .6s ease .1s both; }
     .filter-btn {
-      appearance: none;
-      border: 1px solid var(--border);
-      background: var(--bg-card);
-      color: var(--text-secondary);
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      padding: 9px 16px;
-      border-radius: 999px;
-      cursor: pointer;
-      transition: all .15s ease;
+      appearance: none; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary);
+      font-family: inherit; font-size: 13px; font-weight: 500; padding: 9px 16px; border-radius: 999px; cursor: pointer; transition: all .15s ease;
     }
+    .filter-btn:hover { color: var(--text); border-color: #3a3a40; }
+    .filter-btn.active { background: var(--purple-dim); border-color: rgba(139, 92, 246, .5); color: var(--purple-bright); }
+    .filter-btn .count { opacity: .7; font-size: 11px; margin-left: 4px; }
 
-    .filter-btn:hover {
-      color: var(--text);
-      border-color: #3a3a40;
-    }
-
-    .filter-btn.active {
-      background: var(--purple-dim);
-      border-color: rgba(139, 92, 246, .5);
-      color: var(--purple-bright);
-    }
-
-    .filter-btn .count {
-      opacity: .7;
-      font-size: 11px;
-      margin-left: 4px;
-    }
-
-    /* ===========================================================
-     MOVIE LIST
-     =========================================================== */
-    .list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      animation: fadeUp .6s ease .15s both;
-    }
-
+    .list { display: flex; flex-direction: column; gap: 10px; animation: fadeUp .6s ease .15s both; }
     .movie-card {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 14px 14px 16px;
-      transition: border-color .15s ease, transform .15s ease, background .15s ease;
-      animation: cardIn .35s ease both;
+      display: flex; align-items: center; gap: 12px; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px 14px 14px 16px; transition: border-color .15s ease, transform .15s ease, background .15s ease; animation: cardIn .35s ease both;
     }
-
-    .movie-card:hover {
-      border-color: #323238;
-    }
-
-    .movie-card.watched {
-      opacity: .55;
-    }
-
+    .movie-card:hover { border-color: #323238; }
+    .movie-card.watched { opacity: .55; }
     .status-toggle {
-      flex-shrink: 0;
-      width: 24px;
-      height: 24px;
-      border-radius: 7px;
-      border: 1.5px solid var(--border);
-      background: transparent;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: transparent;
-      transition: all .15s ease;
+      flex-shrink: 0; width: 24px; height: 24px; border-radius: 7px; border: 1.5px solid var(--border);
+      background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: transparent; transition: all .15s ease;
     }
-
-    .status-toggle:hover {
-      border-color: var(--purple);
-    }
-
-    .movie-card.watched .status-toggle {
-      background: var(--green);
-      border-color: var(--green);
-      color: #06281c;
-    }
-
-    .movie-title {
-      flex: 1;
-      font-size: 15px;
-      font-weight: 500;
-      word-break: break-word;
-    }
-
-    .movie-card.watched .movie-title {
-      text-decoration: line-through;
-      text-decoration-color: var(--text-faint);
-    }
-
-    .movie-badge {
-      flex-shrink: 0;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-      padding: 4px 9px;
-      border-radius: 999px;
-      background: var(--purple-dim);
-      color: var(--purple-bright);
-    }
-
-    .movie-card.watched .movie-badge {
-      background: rgba(52, 211, 153, .12);
-      color: var(--green);
-    }
-
+    .status-toggle:hover { border-color: var(--purple); }
+    .movie-card.watched .status-toggle { background: var(--green); border-color: var(--green); color: #06281c; }
+    .movie-title { flex: 1; font-size: 15px; font-weight: 500; word-break: break-word; }
+    .movie-card.watched .movie-title { text-decoration: line-through; text-decoration-color: var(--text-faint); }
+    .movie-badge { flex-shrink: 0; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; background: var(--purple-dim); color: var(--purple-bright); }
+    .movie-card.watched .movie-badge { background: rgba(52, 211, 153, .12); color: var(--green); }
     .delete-btn {
-      flex-shrink: 0;
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      border: none;
-      background: transparent;
-      color: var(--text-faint);
-      cursor: pointer;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all .15s ease;
+      flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px; border: none; background: transparent;
+      color: var(--text-faint); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all .15s ease;
     }
+    .delete-btn:hover { background: rgba(248, 113, 113, .12); color: var(--red); }
 
-    .delete-btn:hover {
-      background: rgba(248, 113, 113, .12);
-      color: var(--red);
-    }
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--text-faint); border: 1px dashed var(--border); border-radius: var(--radius); font-size: 14px; }
+    .empty-state .big { font-size: 32px; display: block; margin-bottom: 10px; }
 
-    /* Empty state */
-    .empty-state {
-      text-align: center;
-      padding: 48px 20px;
-      color: var(--text-faint);
-      border: 1px dashed var(--border);
-      border-radius: var(--radius);
-      font-size: 14px;
-    }
-
-    .empty-state .big {
-      font-size: 32px;
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    /* ===========================================================
-     MODAL (result)
-     =========================================================== */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .7);
-      backdrop-filter: blur(6px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 100;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .2s ease;
-    }
-
-    .modal-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .7); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 100; opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
     .modal {
-      width: 100%;
-      max-width: 380px;
-      background: var(--bg-elevated);
-      border: 1px solid rgba(139, 92, 246, .3);
-      border-radius: 20px;
-      padding: 36px 28px 28px;
-      text-align: center;
-      box-shadow: 0 0 0 1px rgba(139, 92, 246, .1), 0 30px 60px -20px rgba(0, 0, 0, .7), 0 0 60px -15px rgba(139, 92, 246, .35);
-      transform: scale(.92) translateY(10px);
-      transition: transform .25s cubic-bezier(.2, 1.4, .4, 1);
+      width: 100%; max-width: 380px; background: var(--bg-elevated); border: 1px solid rgba(139, 92, 246, .3); border-radius: 20px; padding: 36px 28px 28px; text-align: center;
+      box-shadow: 0 0 0 1px rgba(139, 92, 246, .1), 0 30px 60px -20px rgba(0, 0, 0, .7), 0 0 60px -15px rgba(139, 92, 246, .35); transform: scale(.92) translateY(10px); transition: transform .25s cubic-bezier(.2, 1.4, .4, 1);
     }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal .clapper { font-size: 44px; margin-bottom: 6px; display: block; }
+    .modal .eyebrow { margin-bottom: 14px; }
+    .modal h2 { font-size: 24px; margin: 0 0 8px; word-break: break-word; letter-spacing: -0.01em; }
+    .modal p.helper { color: var(--text-secondary); font-size: 13.5px; margin: 0 0 26px; }
+    .modal-actions { display: flex; gap: 10px; }
+    .modal-actions button { flex: 1; border: none; border-radius: 10px; padding: 12px 14px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .15s ease; }
+    #modalMarkWatched { background: var(--purple); color: #fff; }
+    #modalMarkWatched:hover { background: var(--purple-bright); }
+    #modalClose { background: var(--bg-card); border: 1px solid var(--border) !important; color: var(--text-secondary); }
+    #modalClose:hover { color: var(--text); border-color: #3a3a40 !important; }
 
-    .modal-overlay.open .modal {
-      transform: scale(1) translateY(0);
-    }
-
-    .modal .clapper {
-      font-size: 44px;
-      margin-bottom: 6px;
-      display: block;
-    }
-
-    .modal .eyebrow {
-      margin-bottom: 14px;
-    }
-
-    .modal h2 {
-      font-size: 24px;
-      margin: 0 0 8px;
-      word-break: break-word;
-      letter-spacing: -0.01em;
-    }
-
-    .modal p.helper {
-      color: var(--text-secondary);
-      font-size: 13.5px;
-      margin: 0 0 26px;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .modal-actions button {
-      flex: 1;
-      border: none;
-      border-radius: 10px;
-      padding: 12px 14px;
-      font-family: inherit;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all .15s ease;
-    }
-
-    #modalMarkWatched {
-      background: var(--purple);
-      color: #fff;
-    }
-
-    #modalMarkWatched:hover {
-      background: var(--purple-bright);
-    }
-
-    #modalClose {
-      background: var(--bg-card);
-      border: 1px solid var(--border) !important;
-      color: var(--text-secondary);
-    }
-
-    #modalClose:hover {
-      color: var(--text);
-      border-color: #3a3a40 !important;
-    }
-
-    /* ===========================================================
-     TOAST (feedback)
-     =========================================================== */
     .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-size: 14px;
-      padding: 14px 20px;
-      border-radius: 12px;
-      box-shadow: 0 12px 30px -10px rgba(0, 0, 0, .6);
-      opacity: 0;
-      pointer-events: none;
-      transition: all .25s ease;
-      z-index: 200;
-      max-width: 90vw;
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text);
+      font-size: 14px; padding: 14px 20px; border-radius: 12px; box-shadow: 0 12px 30px -10px rgba(0, 0, 0, .6); opacity: 0; pointer-events: none; transition: all .25s ease; z-index: 200; max-width: 90vw;
     }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
+    footer { text-align: center; margin-top: 56px; color: var(--text-faint); font-size: 12.5px; }
 
-    /* ===========================================================
-     FOOTER
-     =========================================================== */
-    footer {
-      text-align: center;
-      margin-top: 56px;
-      color: var(--text-faint);
-      font-size: 12.5px;
-    }
-
-    /* ===========================================================
-     ANIMATIONS
-     =========================================================== */
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes cardIn {
-      from {
-        opacity: 0;
-        transform: translateY(6px) scale(.98);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      * {
-        animation-duration: .001s !important;
-        transition-duration: .001s !important;
-      }
-    }
-
-    button:focus-visible,
-    input:focus-visible {
-      outline: 2px solid var(--purple-bright);
-      outline-offset: 2px;
-    }
-
-    @media (max-width: 420px) {
-      .wrap {
-        padding: 32px 16px 80px;
-      }
-
-      .filter-btn {
-        font-size: 12.5px;
-        padding: 8px 13px;
-      }
-    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(6px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @media (prefers-reduced-motion: reduce) { * { animation-duration: .001s !important; transition-duration: .001s !important; } }
+    button:focus-visible, input:focus-visible { outline: 2px solid var(--purple-bright); outline-offset: 2px; }
+    @media (max-width: 420px) { .wrap { padding: 32px 16px 80px; } .filter-btn { font-size: 12.5px; padding: 8px 13px; } }
   </style>
 </head>
 
@@ -744,7 +344,7 @@
 
     <div id="authScreen" class="auth-container hidden">
       <h2 id="authTitle">Entrar no Sorteador</h2>
-      <p id="authSubtitle">Acesse para sincronizar sua lista de filmes.</p>
+      <p id="authSubtitle">Acesse com sua conta individual.</p>
 
       <form id="authForm" class="auth-form" novalidate>
         <div class="input-group">
@@ -753,14 +353,14 @@
         </div>
         <div class="input-group">
           <label for="authPassword">Senha</label>
-          <input type="password" id="authPassword" placeholder="Sua senha (mín. 6 caracteres)" required>
+          <input type="password" id="authPassword" placeholder="Sua senha" required>
         </div>
-        <button type="submit" id="authSubmitBtn">Entrar</button>
+        <button type="submit" id="authSubmitBtn" class="btn-primary" style="margin-top: 8px;">Entrar</button>
       </form>
 
-      <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 10px;">
-      <div style="text-align: center; color: var(--text-faint); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">ou</div>
-      <button id="googleAuthBtn" type="button" style="background: #ffffff; color: #1f1f1f; border: none; font-family: inherit; font-size: 15px; font-weight: 600; padding: 12px; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background .15s ease;">
+      <div class="divider">ou</div>
+      
+      <button id="googleAuthBtn" type="button" class="btn-secondary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; background: #ffffff; color: #1f1f1f; border: none;">
         <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69c-.29 1.5-1.14 2.77-2.4 3.63v3h3.86c2.26-2.09 3.59-5.17 3.59-8.48z"/>
           <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.38v3.1A11.99 11.99 0 0 0 12 24z"/>
@@ -769,7 +369,6 @@
         </svg>
         Entrar com o Google
       </button>
-    </div>
 
       <div class="auth-switch">
         <span id="authSwitchText">Não tem uma conta?</span>
@@ -777,17 +376,41 @@
       </div>
     </div>
 
+    <div id="listScreen" class="auth-container hidden">
+      <h2>Suas Listas</h2>
+      <p>Crie uma sala para compartilhar ou entre com um código existente.</p>
+      
+      <div class="auth-form">
+        <button id="createListBtn" class="btn-primary" type="button">+ Criar Nova Lista Compartilhada</button>
+        
+        <div class="divider">ou</div>
+        
+        <form id="joinListForm" style="display: flex; flex-direction: column; gap: 8px;">
+          <input type="text" id="joinListInput" placeholder="Código da Lista (Ex: A1B2C3)" required style="text-transform: uppercase; text-align: center; letter-spacing: 2px;">
+          <button type="submit" class="btn-secondary">Entrar na Lista</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 16px;">
+          <button id="backToLoginBtn" type="button" style="background: none; border: none; color: var(--text-faint); font-family: inherit; cursor: pointer; text-decoration: underline;">Fazer logout</button>
+        </div>
+      </div>
+    </div>
+
     <div id="appScreen" class="hidden">
 
       <div class="user-bar">
-        <span class="user-info">Conectado como: <strong id="userEmailDisplay">—</strong></span>
-        <button id="logoutBtn" class="logout-btn" type="button">Sair</button>
+        <span class="user-info">Cód. da Lista: <strong id="listCodeDisplay">—</strong></span>
+        <div class="user-actions">
+          <button id="leaveListBtn" class="leave-list-btn" type="button">Mudar Lista</button>
+          <span style="color: var(--border);">|</span>
+          <button id="logoutBtn" class="logout-btn" type="button">Sair</button>
+        </div>
       </div>
 
       <header class="hero">
-        <span class="eyebrow">🎬 sua watchlist na nuvem</span>
+        <span class="eyebrow">🎬 sessão compartilhada</span>
         <h1>Sorteador de <span>Filmes</span></h1>
-        <p class="subtitle">Adicione os filmes que quer assistir e deixe a sorte escolher o próximo da sessão.</p>
+        <p class="subtitle">Adicionem os filmes e deixem a sorte escolher o que vocês vão assistir hoje.</p>
       </header>
 
       <div class="draw-zone">
@@ -805,17 +428,14 @@
       <div class="form-error" id="formError" role="alert"></div>
 
       <nav class="filters" id="filters">
-        <button class="filter-btn active" data-filter="all" type="button">Todos <span class="count"
-            id="countAll"></span></button>
-        <button class="filter-btn" data-filter="unwatched" type="button">Não Assistidos <span class="count"
-            id="countUnwatched"></span></button>
-        <button class="filter-btn" data-filter="watched" type="button">Assistidos <span class="count"
-            id="countWatched"></span></button>
+        <button class="filter-btn active" data-filter="all" type="button">Todos <span class="count" id="countAll"></span></button>
+        <button class="filter-btn" data-filter="unwatched" type="button">Não Assistidos <span class="count" id="countUnwatched"></span></button>
+        <button class="filter-btn" data-filter="watched" type="button">Assistidos <span class="count" id="countWatched"></span></button>
       </nav>
 
       <main class="list" id="list" aria-live="polite"></main>
 
-      <footer>Feito para indecisos. Seus dados estão salvos e sincronizados com segurança.</footer>
+      <footer>Lista sincronizada em tempo real para todos os participantes.</footer>
     </div>
   </div>
 
@@ -835,34 +455,11 @@
   <div class="toast" id="toast" role="status"></div>
 
   <script type="module">
-    // IMPORTAÇÃO DOS SDKS DO FIREBASE VIA CDN
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged,
-      GoogleAuthProvider,
-      signInWithPopup
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      deleteDoc,
-      updateDoc,
-      doc,
-      onSnapshot,
-      query,
-      orderBy,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    /* =========================================================
-       CONFIGURAÇÃO DO FIREBASE
-       ========================================================= */
-    // TODO: Substitua as propriedades abaixo pelas credenciais geradas no seu console do Firebase
+    // TODO: Suas credenciais do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyATbDsUFfSXR6c-t15Kuub0rwtsTirklqM",
       authDomain: "sorteador-de-filmes.firebaseapp.com",
@@ -873,19 +470,17 @@
       measurementId: "G-YP31FSNBZY"
     };
 
-    // Inicializa o Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
     /* =========================================================
-       ELEMENTOS DO DOM
+       DOM ELEMENTS
        ========================================================= */
-    // Telas gerais
     const authScreen = document.getElementById("authScreen");
+    const listScreen = document.getElementById("listScreen");
     const appScreen = document.getElementById("appScreen");
 
-    // Elementos do Auth
     const authForm = document.getElementById("authForm");
     const googleAuthBtn = document.getElementById("googleAuthBtn");
     const authEmailInput = document.getElementById("authEmail");
@@ -895,10 +490,16 @@
     const authSubmitBtn = document.getElementById("authSubmitBtn");
     const authSwitchBtn = document.getElementById("authSwitchBtn");
     const authSwitchText = document.getElementById("authSwitchText");
-    const userEmailDisplay = document.getElementById("userEmailDisplay");
+    const backToLoginBtn = document.getElementById("backToLoginBtn");
+
+    const createListBtn = document.getElementById("createListBtn");
+    const joinListForm = document.getElementById("joinListForm");
+    const joinListInput = document.getElementById("joinListInput");
+
+    const listCodeDisplay = document.getElementById("listCodeDisplay");
+    const leaveListBtn = document.getElementById("leaveListBtn");
     const logoutBtn = document.getElementById("logoutBtn");
 
-    // Elementos do Sorteador
     const form = document.getElementById("addForm");
     const input = document.getElementById("movieInput");
     const formError = document.getElementById("formError");
@@ -916,17 +517,18 @@
     const countWatchedEl = document.getElementById("countWatched");
 
     /* =========================================================
-       ESTADO DA APLICAÇÃO
+       STATE
        ========================================================= */
-    let movies = [];           // [{ id, title, watched }] vindo do Firestore
-    let currentFilter = "all"; // 'all' | 'unwatched' | 'watched'
+    let movies = [];
+    let currentFilter = "all";
     let lastDrawnId = null;
-    let isSignUpMode = false;  // Controla se a tela de auth está em modo Login ou Cadastro
-    let currentUser = null;    // Guarda o usuário autenticado do Firebase
-    let unsubscribeSnapshot = null; // Função limpadora do listener em tempo real do Firestore
+    let isSignUpMode = false;
+    let currentUser = null;
+    let currentListCode = localStorage.getItem("@sorteador:listCode") || null;
+    let unsubscribeSnapshot = null;
 
     /* =========================================================
-       UTILITÁRIOS
+       UTILS
        ========================================================= */
     function escapeHTML(str) {
       const div = document.createElement("div");
@@ -950,30 +552,35 @@
       }
     }
 
-    function normalize(title) {
-      return title.trim().toLowerCase();
+    function generateListCode() {
+      // Gera um código alfanumérico curto, ex: X7B2M
+      return Math.random().toString(36).substring(2, 7).toUpperCase();
     }
 
-    function isDuplicate(title) {
-      const normalized = normalize(title);
-      return movies.some((m) => normalize(m.title) === normalized);
-    }
+    function normalize(title) { return title.trim().toLowerCase(); }
+    function isDuplicate(title) { return movies.some((m) => normalize(m.title) === normalize(title)); }
 
     /* =========================================================
-       GERENCIAMENTO DE TELA E AUTH COM FIREBASE
+       AUTH & SCREENS
        ========================================================= */
-    // Alterna o modo da tela de autenticação entre Login e Cadastro
+    function showScreen(screenId) {
+      authScreen.classList.add("hidden");
+      listScreen.classList.add("hidden");
+      appScreen.classList.add("hidden");
+      document.getElementById(screenId).classList.remove("hidden");
+    }
+
     authSwitchBtn.addEventListener("click", () => {
       isSignUpMode = !isSignUpMode;
       if (isSignUpMode) {
         authTitle.textContent = "Criar uma Conta";
-        authSubtitle.textContent = "Cadastre-se para começar sua lista.";
+        authSubtitle.textContent = "Cadastre-se para usar o aplicativo.";
         authSubmitBtn.textContent = "Cadastrar";
         authSwitchText.textContent = "Já possui uma conta?";
         authSwitchBtn.textContent = "Entrar";
       } else {
         authTitle.textContent = "Entrar no Sorteador";
-        authSubtitle.textContent = "Acesse para sincronizar sua lista de filmes.";
+        authSubtitle.textContent = "Acesse com sua conta individual.";
         authSubmitBtn.textContent = "Entrar";
         authSwitchText.textContent = "Não tem uma conta?";
         authSwitchBtn.textContent = "Criar conta";
@@ -981,192 +588,154 @@
       authForm.reset();
     });
 
-    // Envio do formulário de autenticação
     authForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = authEmailInput.value.trim();
       const password = authPasswordInput.value;
-
-      if (!email || !password) {
-        showToast("⚠️ Preencha todos os campos.");
-        return;
-      }
+      if (!email || !password) return showToast("⚠️ Preencha todos os campos.");
 
       try {
         authSubmitBtn.disabled = true;
         if (isSignUpMode) {
           await createUserWithEmailAndPassword(auth, email, password);
-          showToast("✨ Conta criada com sucesso!");
+          showToast("✨ Conta criada!");
         } else {
           await signInWithEmailAndPassword(auth, email, password);
-          showToast("🍿 Bem-vindo de volta!");
         }
       } catch (error) {
-        console.error("Erro na autenticação:", error);
-        switch (error.code) {
-          case "auth/email-already-in-use":
-            showToast("⚠️ Este e-mail já está em uso.");
-            break;
-          case "auth/invalid-credential":
-            showToast("⚠️ E-mail ou senha incorretos.");
-            break;
-          case "auth/weak-password":
-            showToast("⚠️ A senha deve conter pelo menos 6 caracteres.");
-            break;
-          case "auth/invalid-email":
-            showToast("⚠️ Formato de e-mail inválido.");
-            break;
-          default:
-            showToast("⚠️ Ocorreu um erro. Tente novamente.");
-        }
+        showToast("⚠️ Erro: verifique seus dados.");
+        console.error(error);
       } finally {
         authSubmitBtn.disabled = false;
       }
     });
 
     googleAuthBtn.addEventListener("click", async () => {
-      const provider = new GoogleAuthProvider();
       try {
         googleAuthBtn.disabled = true;
-        // Abre a janelinha de login do Google
-        await signInWithPopup(auth, provider);
-        showToast("🍿 Conectado via Google!");
+        await signInWithPopup(auth, new GoogleAuthProvider());
       } catch (error) {
-        console.error("Erro ao autenticar com o Google:", error);
-        if (error.code === "auth/popup-closed-by-user") {
-          showToast("⚠️ O login foi cancelado pelo usuário.");
-        } else {
-          showToast("⚠️ Falha ao entrar com o Google.");
-        }
+        if (error.code !== "auth/popup-closed-by-user") showToast("⚠️ Falha ao entrar com Google.");
       } finally {
         googleAuthBtn.disabled = false;
       }
     });
 
-    // Ação do Botão de Sair
-    logoutBtn.addEventListener("click", () => {
-      signOut(auth).then(() => {
-        showToast("Até a próxima! 👋");
-      }).catch((err) => {
-        console.error("Erro ao sair:", err);
-      });
+    backToLoginBtn.addEventListener("click", () => signOut(auth));
+    logoutBtn.addEventListener("click", () => signOut(auth));
+
+    leaveListBtn.addEventListener("click", () => {
+      currentListCode = null;
+      localStorage.removeItem("@sorteador:listCode");
+      if (unsubscribeSnapshot) {
+        unsubscribeSnapshot();
+        unsubscribeSnapshot = null;
+      }
+      showScreen("listScreen");
     });
 
-    // Observador de estado de Autenticação (Gera o ciclo de vida do app)
     onAuthStateChanged(auth, (user) => {
       if (user) {
         currentUser = user;
-        userEmailDisplay.textContent = user.email;
-
-        // Esconde login e exibe o app
-        authScreen.classList.add("hidden");
-        appScreen.classList.remove("hidden");
-
-        // Inicia a sincronização com o Firestore de forma reativa para o usuário atual
-        setupFirestoreSubscription(user.uid);
+        if (currentListCode) {
+          enterApp(currentListCode);
+        } else {
+          showScreen("listScreen");
+        }
       } else {
         currentUser = null;
+        currentListCode = null;
         movies = [];
-
-        // Cancela a escuta ativa do Firestore do usuário anterior
-        if (unsubscribeSnapshot) {
-          unsubscribeSnapshot();
-          unsubscribeSnapshot = null;
-        }
-
-        // Esconde o app e exibe a tela de login
-        appScreen.classList.add("hidden");
-        authScreen.classList.remove("hidden");
-        authForm.reset();
-        render();
+        if (unsubscribeSnapshot) unsubscribeSnapshot();
+        showScreen("authScreen");
       }
     });
 
     /* =========================================================
-       PERSISTÊNCIA E OPERAÇÕES COM FIRESTORE (Tempo Real)
+       LIST MANAGEMENT (Opção 2 - Códigos)
        ========================================================= */
-    function setupFirestoreSubscription(userId) {
+    createListBtn.addEventListener("click", () => {
+      const newCode = generateListCode();
+      enterApp(newCode);
+      showToast(`Sala ${newCode} criada com sucesso!`);
+    });
+
+    joinListForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const code = joinListInput.value.trim().toUpperCase();
+      if (!code) return;
+      enterApp(code);
+    });
+
+    function enterApp(code) {
+      currentListCode = code;
+      localStorage.setItem("@sorteador:listCode", code);
+      listCodeDisplay.textContent = code;
+      showScreen("appScreen");
+      setupFirestoreSubscription(code);
+      joinListInput.value = "";
+    }
+
+    /* =========================================================
+       FIRESTORE (Globalized List path: lists/{CODE}/movies)
+       ========================================================= */
+    function setupFirestoreSubscription(listCode) {
       if (unsubscribeSnapshot) unsubscribeSnapshot();
 
-      // Referência do caminho: users/{userId}/movies ordenados por data decrescente
-      const moviesRef = collection(db, "users", userId, "movies");
+      // MUDANÇA PRINCIPAL: Agora o caminho é baseado no código da sala
+      const moviesRef = collection(db, "lists", listCode, "movies");
       const q = query(moviesRef, orderBy("createdAt", "desc"));
 
-      // O onSnapshot ouve modificações no banco e atualiza a tela instantaneamente
       unsubscribeSnapshot = onSnapshot(q, (snapshot) => {
         movies = [];
         snapshot.forEach((docSnap) => {
           const data = docSnap.data();
-          movies.push({
-            id: docSnap.id,
-            title: data.title || "",
-            watched: Boolean(data.watched)
-          });
+          movies.push({ id: docSnap.id, title: data.title || "", watched: Boolean(data.watched) });
         });
         render();
       }, (error) => {
-        console.error("Erro no Listener do Firestore:", error);
-        showToast("⚠️ Erro ao carregar os dados em tempo real.");
+        console.error("Erro no Firestore:", error);
+        if(error.code === "permission-denied") {
+            showToast("⚠️ Sem permissão. Verifique as Regras do Firebase.");
+        }
       });
     }
 
     async function addMovie(rawTitle) {
       const title = rawTitle.trim();
-
-      if (!title) {
-        showFormError("Digite o nome de um filme.");
-        return false;
-      }
-      if (isDuplicate(title)) {
-        showFormError("Esse filme já está na sua lista.");
-        return false;
-      }
+      if (!title) return false;
+      if (isDuplicate(title)) { showFormError("Filme já está na lista."); return false; }
 
       try {
-        if (!currentUser) return false;
-        const moviesRef = collection(db, "users", currentUser.uid, "movies");
-
-        await addDoc(moviesRef, {
-          title: title,
-          watched: false,
-          createdAt: serverTimestamp() // Mantém a consistência temporal na nuvem
-        });
+        if (!currentUser || !currentListCode) return false;
+        const moviesRef = collection(db, "lists", currentListCode, "movies");
+        await addDoc(moviesRef, { title, watched: false, createdAt: serverTimestamp() });
         return true;
       } catch (err) {
-        console.error("Erro ao adicionar filme:", err);
-        showToast("⚠️ Erro ao salvar filme.");
-        return false;
+        showToast("⚠️ Erro ao salvar filme."); return false;
       }
     }
 
     async function removeMovie(id) {
       try {
-        if (!currentUser) return;
-        const docRef = doc(db, "users", currentUser.uid, "movies", id);
+        if (!currentUser || !currentListCode) return;
+        const docRef = doc(db, "lists", currentListCode, "movies", id);
         await deleteDoc(docRef);
-      } catch (err) {
-        console.error("Erro ao deletar filme:", err);
-        showToast("⚠️ Erro ao remover o filme.");
-      }
+      } catch (err) { showToast("⚠️ Erro ao remover."); }
     }
 
     async function toggleWatched(id) {
       const movie = movies.find((m) => m.id === id);
-      if (!movie || !currentUser) return;
+      if (!movie || !currentUser || !currentListCode) return;
 
       try {
-        const docRef = doc(db, "users", currentUser.uid, "movies", id);
-        await updateDoc(docRef, {
-          watched: !movie.watched
-        });
-      } catch (err) {
-        console.error("Erro ao atualizar status:", err);
-        showToast("⚠️ Erro ao atualizar status.");
-      }
+        const docRef = doc(db, "lists", currentListCode, "movies", id);
+        await updateDoc(docRef, { watched: !movie.watched });
+      } catch (err) { showToast("⚠️ Erro ao atualizar."); }
     }
 
     /* =========================================================
-       REGRAS DE NEGÓCIO E RENDERIZAÇÃO
+       RENDER & INTERFACE
        ========================================================= */
     function getFilteredMovies() {
       if (currentFilter === "unwatched") return movies.filter((m) => !m.watched);
@@ -1174,32 +743,7 @@
       return movies;
     }
 
-    function drawRandomMovie() {
-      const pool = movies.filter((m) => !m.watched);
-
-      if (pool.length === 0) {
-        showToast("🎬 Nenhum filme disponível para sortear!");
-        return;
-      }
-
-      drawBtn.disabled = true;
-      drawBtn.classList.add("spinning");
-
-      setTimeout(() => {
-        const chosen = pool[Math.floor(Math.random() * pool.length)];
-        lastDrawnId = chosen.id;
-        openModal(chosen.title);
-        drawBtn.disabled = false;
-        drawBtn.classList.remove("spinning");
-      }, 550);
-    }
-
     function render() {
-      renderCounts();
-      renderList();
-    }
-
-    function renderCounts() {
       const total = movies.length;
       const unwatched = movies.filter((m) => !m.watched).length;
       const watched = total - unwatched;
@@ -1207,131 +751,69 @@
       countAllEl.textContent = total ? `(${total})` : "";
       countUnwatchedEl.textContent = unwatched ? `(${unwatched})` : "";
       countWatchedEl.textContent = watched ? `(${watched})` : "";
-    }
 
-    function renderList() {
       const filtered = getFilteredMovies();
-
       if (filtered.length === 0) {
-        listEl.innerHTML = renderEmptyState();
+        if (movies.length === 0) listEl.innerHTML = `<div class="empty-state"><span class="big">🍿</span>Lista vazia.</div>`;
+        else if (currentFilter === "unwatched") listEl.innerHTML = `<div class="empty-state"><span class="big">✅</span>Você já assistiu tudo!</div>`;
+        else listEl.innerHTML = `<div class="empty-state"><span class="big">👀</span>Nenhum filme assistido.</div>`;
         return;
       }
 
-      listEl.innerHTML = filtered.map(renderMovieCard).join("");
+      listEl.innerHTML = filtered.map(m => `
+        <article class="movie-card ${m.watched ? "watched" : ""}" data-id="${m.id}">
+          <button class="status-toggle" type="button" data-action="toggle">${m.watched ? "✓" : ""}</button>
+          <span class="movie-title">${escapeHTML(m.title)}</span>
+          <span class="movie-badge">${m.watched ? "Assistido" : "Não assistido"}</span>
+          <button class="delete-btn" type="button" data-action="delete">✕</button>
+        </article>
+      `).join("");
     }
 
-    function renderEmptyState() {
-      if (movies.length === 0) {
-        return `
-        <div class="empty-state">
-          <span class="big">🍿</span>
-          Sua lista está vazia.<br>Adicione o primeiro filme acima.
-        </div>`;
-      }
-      if (currentFilter === "unwatched") {
-        return `
-        <div class="empty-state">
-          <span class="big">✅</span>
-          Você já assistiu tudo por aqui!
-        </div>`;
-      }
-      return `
-      <div class="empty-state">
-        <span class="big">👀</span>
-        Nenhum filme assistido ainda.
-      </div>`;
+    function drawRandomMovie() {
+      const pool = movies.filter((m) => !m.watched);
+      if (pool.length === 0) return showToast("🎬 Nenhum filme para sortear!");
+
+      drawBtn.disabled = true;
+      drawBtn.classList.add("spinning");
+      setTimeout(() => {
+        const chosen = pool[Math.floor(Math.random() * pool.length)];
+        lastDrawnId = chosen.id;
+        modalTitle.textContent = chosen.title;
+        modalOverlay.classList.add("open");
+        drawBtn.disabled = false;
+        drawBtn.classList.remove("spinning");
+      }, 550);
     }
 
-    function renderMovieCard(movie) {
-      const safeTitle = escapeHTML(movie.title);
-      const watchedClass = movie.watched ? "watched" : "";
-      const badgeText = movie.watched ? "Assistido" : "Não assistido";
-      const checkMark = movie.watched ? "✓" : "";
-
-      return `
-      <article class="movie-card ${watchedClass}" data-id="${movie.id}">
-        <button
-          class="status-toggle"
-          type="button"
-          aria-label="${movie.watched ? "Marcar como não assistido" : "Marcar como assistido"}"
-          data-action="toggle"
-        >${checkMark}</button>
-        <span class="movie-title">${safeTitle}</span>
-        <span class="movie-badge">${badgeText}</span>
-        <button class="delete-btn" type="button" aria-label="Excluir filme" data-action="delete">✕</button>
-      </article>`;
-    }
-
-    /* =========================================================
-       MODAL DE REVELAÇÃO
-       ========================================================= */
-    function openModal(title) {
-      modalTitle.textContent = title;
-      modalOverlay.classList.add("open");
-    }
-
-    function closeModal() {
-      modalOverlay.classList.remove("open");
-      lastDrawnId = null;
-    }
-
-    /* =========================================================
-       EVENT LISTENERS DO APP
-       ========================================================= */
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const success = await addMovie(input.value);
-      if (success) {
-        input.value = "";
-        input.focus();
-      }
+      if (await addMovie(input.value)) { input.value = ""; input.focus(); }
     });
 
-    input.addEventListener("input", () => {
-      formError.textContent = "";
-    });
-
+    input.addEventListener("input", () => formError.textContent = "");
     filtersEl.addEventListener("click", (e) => {
       const btn = e.target.closest(".filter-btn");
       if (!btn) return;
       currentFilter = btn.dataset.filter;
       document.querySelectorAll(".filter-btn").forEach((b) => b.classList.toggle("active", b === btn));
-      renderList();
+      render();
     });
 
     listEl.addEventListener("click", (e) => {
       const card = e.target.closest(".movie-card");
       if (!card) return;
-      const id = card.dataset.id;
       const action = e.target.closest("[data-action]")?.dataset.action;
-
-      if (action === "toggle") toggleWatched(id);
-      if (action === "delete") removeMovie(id);
+      if (action === "toggle") toggleWatched(card.dataset.id);
+      if (action === "delete") removeMovie(card.dataset.id);
     });
 
     drawBtn.addEventListener("click", drawRandomMovie);
-
-    modalClose.addEventListener("click", closeModal);
-    modalOverlay.addEventListener("click", (e) => {
-      if (e.target === modalOverlay) closeModal();
-    });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && modalOverlay.classList.contains("open")) closeModal();
-    });
-
+    modalClose.addEventListener("click", () => { modalOverlay.classList.remove("open"); lastDrawnId = null; });
     modalMark.addEventListener("click", async () => {
-      if (lastDrawnId && currentUser) {
-        try {
-          const docRef = doc(db, "users", currentUser.uid, "movies", lastDrawnId);
-          await updateDoc(docRef, { watched: true });
-        } catch (err) {
-          console.error("Erro ao marcar como assistido pelo modal:", err);
-        }
-      }
-      closeModal();
+      if (lastDrawnId) toggleWatched(lastDrawnId);
+      modalOverlay.classList.remove("open");
     });
   </script>
-
 </body>
-
 </html>
