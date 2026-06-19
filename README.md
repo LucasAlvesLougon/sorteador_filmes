@@ -1,142 +1,172 @@
 # 🎬 Sorteador de Filmes Compartilhado
 
-Uma aplicação web para criar listas compartilhadas de filmes, sincronizadas em tempo real, permitindo que amigos, casais ou grupos organizem o que assistir e realizem sorteios aleatórios entre os filmes disponíveis.
+Aplicação web para criar listas colaborativas de filmes, sincronizadas em tempo real. Permite que grupos de amigos, casais ou famílias organizem o que querem assistir, sorteiem filmes aleatoriamente e troquem avaliações e comentários.
+
+---
 
 ## ✨ Funcionalidades
 
 ### 🔐 Autenticação
 
-* Login com e-mail e senha
-* Cadastro de novos usuários
-* Login com Google
-* Persistência de sessão
+- Login com e-mail e senha
+- Cadastro de novos usuários
+- Login com Google (OAuth)
+- Sessão persistente entre acessos
 
 ### 👥 Listas Compartilhadas
 
-* Criação de listas através de código único
-* Entrada em listas existentes utilizando código
-* Sincronização em tempo real entre todos os participantes
-* Alterações instantâneas para todos os usuários conectados
+- Criação de lista com código único gerado automaticamente
+- Entrada em listas existentes via código
+- Sincronização em tempo real para todos os participantes via Firestore
 
 ### 🎥 Gerenciamento de Filmes
 
-* Adicionar filmes à lista
-* Remover filmes da lista
-* Evitar duplicidade de filmes
-* Busca automática de pôsteres através da API do TMDB
-* Pesquisa por nome do filme
-* Filtros de visualização
+- Adicionar filmes pelo nome (busca automática no TMDB)
+- Dados enriquecidos buscados automaticamente: pôster, sinopse, gêneros, ano de lançamento, duração e nota TMDB
+- Sinopse em português (PT-BR), com fallback automático para inglês quando não houver tradução
+- Marcar filme como assistido / desmarcar
+- Remover filme da lista
+- Pesquisa por nome na lista atual
+- Filtros: **Todos**, **Não assistidos**, **Assistidos**
+- **Atualizar todos os filmes**: re-busca os dados TMDB de toda a lista de uma só vez
 
-### 📋 Filtros Disponíveis
+### 🎲 Sorteio
 
-* Todos os filmes
-* Não assistidos
-* Assistidos
+- Sorteia aleatoriamente entre os filmes **não assistidos**
+- Animação de suspense estilo roleta
+- Modal de resultado com pôster e título do filme sorteado
+- Opção de marcar o filme sorteado como assistido diretamente no modal
 
-### 🎲 Sorteio Inteligente
+### ℹ️ Modal de Informações
 
-* Sorteia apenas filmes não assistidos
-* Animação de suspense estilo roleta
-* Exibição do pôster do filme sorteado
-* Modal com destaque para o filme escolhido
+Ao clicar em um filme, um modal exibe:
 
-### ☁️ Sincronização em Tempo Real
+- Pôster em alta resolução
+- Título, ano de lançamento e duração
+- Gêneros (badges)
+- Nota do TMDB
+- Sinopse completa
+- Seção de comentários e avaliações do grupo
 
-Todas as alterações são armazenadas no Firebase Firestore e sincronizadas automaticamente para todos os participantes da lista.
+### 💬 Comentários e Avaliações
 
----
-
-## 🛠️ Tecnologias Utilizadas
-
-### Frontend
-
-* HTML5
-* CSS3
-* JavaScript (ES Modules)
-
-### Backend / Serviços
-
-* Firebase Authentication
-* Firebase Firestore
-* TMDB API
-
-### APIs
-
-* The Movie Database (TMDB)
+- Qualquer participante autenticado pode comentar em cada filme
+- Avaliação de 1 a 5 estrelas por comentário
+- Média de avaliações exibida no topo da seção
+- Editar e excluir os próprios comentários
+- Atualizações em tempo real via Firestore
 
 ---
 
-## 📂 Estrutura Atual
+## 🛠️ Tecnologias
+
+| Camada | Tecnologia |
+|---|---|
+| Frontend | HTML5, CSS3, JavaScript (ES Modules nativos) |
+| Autenticação | Firebase Authentication (email/senha + Google) |
+| Banco de dados | Firebase Firestore (tempo real) |
+| Dados de filmes | TMDB API v3 |
+
+Não há bundler, transpilador ou framework de UI — o projeto roda direto no browser com módulos ES nativos e dependências via CDN.
+
+---
+
+## 📂 Estrutura do Projeto
 
 ```text
-index.html
+sorteador_filmes/
+├── index.html           # Único ponto de entrada — HTML completo da aplicação
+├── firestore.rules      # Regras de segurança do Firestore
+└── src/
+    ├── css/
+    │   └── styles.css   # Todos os estilos da aplicação
+    └── js/
+        ├── firebase.js  # Inicialização do Firebase (app, auth, db)
+        ├── auth.js      # Estado de autenticação e operações de login/logout
+        ├── tmdb.js      # Integração com a API do TMDB
+        ├── movies.js    # CRUD de filmes e comentários + batch refresh
+        └── ui.js        # Toda a lógica de UI, DOM e eventos (entry point)
 ```
 
-Todo o projeto está concentrado em um único arquivo contendo:
+### Responsabilidades dos módulos
 
-* Interface
-* Estilos
-* Integração Firebase
-* Integração TMDB
-* Regras de negócio
+**`firebase.js`** — inicializa o Firebase e exporta `auth` e `db`.
+
+**`auth.js`** — gerencia o estado do usuário logado. Exporta `initAuth`, `signInEmail`, `signUpEmail`, `signInGoogle` e `logout`.
+
+**`tmdb.js`** — `fetchMovieDetails(title)` faz duas chamadas à API (busca → detalhes) e retorna `{ posterUrl, synopsis, genres, releaseYear, runtime, tmdbRating, tmdbId }`.
+
+**`movies.js`** — toda a comunicação com o Firestore:
+- `setupMoviesSubscription` / `unsubscribeMovies` — snapshot em tempo real da lista
+- `addMovie`, `removeMovie`, `toggleWatched` — CRUD de filmes
+- `subscribeToComments`, `addComment`, `updateComment`, `deleteComment` — CRUD de comentários
+- `refreshAllMovies` — re-busca TMDB para cada filme da lista com delay de 350 ms entre chamadas
+
+**`ui.js`** — importa todos os módulos acima e conecta a interface ao estado da aplicação. É o único arquivo carregado pelo `index.html`.
 
 ---
 
-## ⚙️ Configuração do Projeto
+## 🗄️ Estrutura do Firestore
+
+```text
+lists/
+└── {listCode}/
+    └── movies/
+        └── {movieId}/
+            ├── title, watched, posterUrl, synopsis
+            ├── genres[], releaseYear, runtime
+            ├── tmdbRating, tmdbId
+            └── comments/
+                └── {commentId}/
+                    ├── userId, userName
+                    ├── text, rating (1–5)
+                    └── createdAt, updatedAt
+```
+
+---
+
+## 🔒 Regras de Segurança (Firestore)
+
+Definidas em `firestore.rules`:
+
+- Listas e filmes: leitura e escrita apenas para usuários autenticados
+- Comentários:
+  - **Leitura**: qualquer usuário autenticado
+  - **Criação**: usuário autenticado, com `userId == auth.uid`
+  - **Edição / exclusão**: apenas o autor do comentário (`resource.data.userId == auth.uid`)
+
+> As regras devem ser publicadas no [Firebase Console](https://console.firebase.google.com) ou via Firebase CLI.
+
+---
+
+## ⚙️ Configuração
 
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repositorio.git
+git clone https://github.com/seu-usuario/sorteador-filmes.git
+cd sorteador-filmes
 ```
 
 ### 2. Criar projeto no Firebase
 
-Acesse:
+Acesse [console.firebase.google.com](https://console.firebase.google.com) e:
 
-https://console.firebase.google.com
+1. Crie um novo projeto
+2. Ative o **Firebase Authentication** (provedores: E-mail/Senha e Google)
+3. Crie um banco **Firestore Database** (modo produção)
+4. Copie as credenciais do app Web e substitua o objeto `firebaseConfig` em `src/js/firebase.js`
 
-Configure:
+### 3. Publicar as regras do Firestore
 
-* Authentication
-* Firestore Database
+Copie o conteúdo de `firestore.rules` e publique em:  
+**Firebase Console → Firestore → Regras**
 
-### 3. Habilitar autenticação
+### 4. Obter chave da API do TMDB
 
-No Firebase Authentication:
-
-* Email/Senha
-* Google
-
-### 4. Configurar Firestore
-
-Estrutura utilizada:
-
-```text
-lists
- └── CODIGO_DA_LISTA
-      └── movies
-           └── FILME
-```
-
-Documento de filme:
-
-```json
-{
-  "title": "Interestelar",
-  "watched": false,
-  "posterUrl": "https://...",
-  "createdAt": "timestamp"
-}
-```
-
-### 5. Configurar API do TMDB
-
-Crie uma conta:
-
-https://www.themoviedb.org
-
-Gere uma API Key e substitua:
+1. Crie uma conta em [themoviedb.org](https://www.themoviedb.org)
+2. Gere uma API Key em **Configurações → API**
+3. Substitua a constante em `src/js/tmdb.js`:
 
 ```javascript
 const TMDB_API_KEY = "SUA_API_KEY";
@@ -146,100 +176,25 @@ const TMDB_API_KEY = "SUA_API_KEY";
 
 ## 🚀 Executando o Projeto
 
-Como o projeto utiliza módulos JavaScript, recomenda-se executar através de um servidor local.
+O projeto usa ES Modules nativos e requer um servidor HTTP local (não funciona abrindo o arquivo diretamente).
 
-Exemplo com VS Code:
+**Opção 1 — VS Code Live Server:**
 
-1. Instale a extensão Live Server.
-2. Clique em "Open with Live Server".
+1. Instale a extensão [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
+2. Clique com botão direito em `index.html` → **Open with Live Server**
 
-Ou:
+**Opção 2 — Python:**
 
 ```bash
 python -m http.server 8000
 ```
 
-Acesse:
+Acesse `http://localhost:8000`
 
-```text
-http://localhost:8000
-```
+**Opção 3 — Node.js (npx):**
 
----
-
-## 🔮 Melhorias Futuras
-
-### Sistema de Avaliações
-
-Cada usuário poderá atribuir uma nota:
-
-```json
-{
-  "ratings": {
-    "uid1": 5,
-    "uid2": 4,
-    "uid3": 5
-  }
-}
-```
-
-Com cálculo automático da média.
-
-### Modal de Informações
-
-Exibir:
-
-* Sinopse
-* Gêneros
-* Ano de lançamento
-* Duração
-* Nota TMDB
-* Avaliações dos participantes
-
-### Comentários
-
-Sistema de comentários compartilhados por filme.
-
-### Status Avançados
-
-Substituir:
-
-```json
-{
-  "watched": true
-}
-```
-
-por:
-
-```json
-{
-  "status": "watched"
-}
-```
-
-Possíveis status:
-
-* unwatched
-* watching
-* watched
-* abandoned
-
-### Refatoração
-
-Separação em módulos:
-
-```text
-src/
-├── css/
-│   └── styles.css
-├── js/
-│   ├── firebase.js
-│   ├── auth.js
-│   ├── movies.js
-│   ├── ui.js
-│   └── tmdb.js
-└── index.html
+```bash
+npx serve .
 ```
 
 ---
